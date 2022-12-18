@@ -1,28 +1,24 @@
 
-%\documentclass{mp}
+\documentclass{mp}
 
-\documentclass{article}
-
-\usepackage[utf8]{inputenc}
 \usepackage{graphicx}
 \graphicspath{{images/}}
 
 \usepackage{subfiles}
 
 
-\title{Interaktivní web - textová hra}
-\author{Vojtěch Lančarič}
-
 \begin{document}
 
-
-\maketitle
-
-\newpage %tohle tady pak nebude
+\subfile{title_page}
 
 \subfile{uvod} %anotace a cestne prohlaseni 
 \newpage
 \subfile{introduction}
+
+\newpage
+\tableofcontents
+%obsah
+
 \newpage
 \subfile{cile}
 
@@ -35,16 +31,16 @@
 \newpage
 \subfile{javascript}
 
-
-
-
+\newpage
+\subfile{git}
 \newpage
 
-\section{použité zdroje}
 
-\newpage
-\section{seznam obrázků}
+%seznam obrázků
+\listoffigures
+\clearpage
 
+\subfile{literatura}
 
 \end{document}
 
