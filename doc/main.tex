@@ -2,10 +2,19 @@
 \documentclass{mp}
 
 \usepackage{graphicx}
+\usepackage{subfiles}
+\usepackage{amsmath}
 \graphicspath{{images/}}
 
-\usepackage{subfiles}
 
+
+%trocha uprav kvuli maticovemu zapisu v latex.tex
+\makeatletter
+\renewcommand*\env@matrix[1][*\c@MaxMatrixCols c]{%
+  \hskip -\arraycolsep
+  \let\@ifnextchar\new@ifnextchar
+  \array{#1}}
+\makeatother
 
 \begin{document}
 
@@ -22,6 +31,7 @@
 \newpage
 \subfile{cile}
 
+\newpage
 \subfile{textova_hra}
 \newpage
 
@@ -35,6 +45,8 @@
 \subfile{git}
 \newpage
 
+\subfile{latex}
+\newpage
 
 %seznam obrázků
 \listoffigures
