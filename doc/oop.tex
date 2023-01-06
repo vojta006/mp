@@ -1,0 +1,19 @@
+
+\documentclass[main.tex]{subfiles}
+\begin{document}
+
+\section{Objektově orientované programování}
+Objektově orientované programování (OOP) je programovací paradigma (styl, technika), založená na konceptu objektů, jež uchovávají data a kód, který by se měl vztahovat k datům objektu. Kód, jež je ve standardním smyslu funkcí, se v kontextu objektu nazývá metoda. Určitým protipólem k OOP je programování imperativní ( procedurální ). Základními pojmy OOP jsou:
+\begin{itemize}
+	\item Objekt - množina proměnných, která představuje daný objekt. ogramu, který obsahuje abstrakce množiny proměnných, jež jsou uchovávány v objektu. k nimiž z okolí objektu přistupováno.
+		%\img{} %tady vložit obrázek třídy Auto s pár atributy
+		Nejprve je vytvořena třida auto, která obsahuje proměnné znacka, rok\_vyroby, model. Poté je vytvořen samotný objekt \textit{Audi}, který v sobě uchovává všechny proměnné, k nimž lze přistupovat. (implementace v javascriptu)
+	\item Zapouzdření - k datům objektu je zakázáno přistupovat jinak, než přes rozhranní objektu a měnit je. K tomu typicky slouží speciální metody get a set
+	\item Dědičnost - pro možnost větší abstrakce slouží dědičnost. Objekt může být potomkem jiného objektu. Tehdy přebírá jeho vlastnosti - data a metody. Tyto vlastnoti jsou dále součástí objektu a lze k nim přistupovat běžným způsobem.
+		%\img{} %obrazek s dedenim tridy
+	\item Polymorfismus - umožňuje různým objektům, které mají společného předka, aby byla zavolána metoda přes tohoto předka. Implementace dané funkce se v potomcích typicky liší.
+		%\img{}
+		Dalším druhem polymorfismu (parametrický) je volání funkce pro různé datové typy. Příklad z jazyka c++, ve kterém to umožňuje použití šablon.
+		%\img{}
+\end{itemize}
+\end{document}
