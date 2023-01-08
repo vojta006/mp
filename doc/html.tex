@@ -13,12 +13,20 @@ Verze HTML 0.9 - 1.2 vznikly v letech 1991 - 1993, avšak nepodporovaly grafick�
 
 \subsection{Specifikace}
 HTML je strukturováno množinou tagů, které mohou mít vlastnosti (atributy). Tag se skládá z názvu tagu uzavřeném mezi špičatými závorkami. Tagy jsou obvykle párové, přičemž počáteční značka se shoduje s koncovou. Koncová má pouze před názvem lomítko. Tag ovlivňuje veškerý obsah mezi značkami, což mohou být i dalši tagy. Atributy tagu se zapisují za název první značky, a dodefinovávají vlastnosti tagu. V ukázce níže je tag, který slouží pro vytvoření odkazu. Jeho atributy jsou v tomto případě href, který udává, kam se má uživatel dostat po kliknutí na odkaz, a target, jenž definuje, že se má odkaz otevřít v novém okně prohlížeče.\cite{web:wik:en:html}
-\includegraphics{./html/tags.png} %příklad párového tagu
+		\begin{figure}[h]
+			\centering
+			\includegraphics[width=.7\textwidth]{./html/tags.png}
+			\caption{Znazornění třídy}
+		\end{figure}
 
 
 
 Nepárové tagy mají pouze jednu značku - postrádají koncovou, a nemají žádný obsah. Příkladem buď tag includegraphics, jenž do dokumentu přidá obrázek "image.jpg".
-\includegraphics{./html/img.png}
+		\begin{figure}[h]
+			\centering
+			\includegraphics[width=.7\textwidth]{./html/img.png}
+			\caption{Znazornění třídy}
+		\end{figure}
 
 Počet HTML tagů se v jednotlivých verzích liší. HTML 1.0 definovalo 22 značek. Jejich počet se v 3.2 zvýšil na 70, a dále v HTML 5.2 je jich definováno 111. Počítáme-li k nim i tagy XHTML specifikace, dostaneme 133. \cite{web:en:counting_html}
 
