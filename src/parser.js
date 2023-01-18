@@ -25,7 +25,6 @@ class Objects{
         this.name = name;
         this.description = description;
     }
-    
 }
 
 class Room{
@@ -34,18 +33,97 @@ class Room{
         this.description = description;
         this.name = name; 
         this.items = items;
-        this.directions = dir;
+       // this.directions = dir;
+    }
+}
+
+class Parser{
+
+     removePunctuation(text){
+        const chars = 'áčďéěíňóřšťůúýž';
+        const replace = 'acdeeinorstuuyz';
+
+        for(var i = 0; i < chars.length; i++){
+            var re = new RegExp(chars[i], 'gi');
+            text = text.replace(re, replace[i]);
+        }
+        return text;
+    }
+    
+    score_word(obraz, vzor){
+        var score = 0;
+    }
+
+    //vybereme nejvhodnejsi slova 
+    mostApropriate(sep, set_of_words){
+        var command = "";
+        for(var word in set_of_words){
+            var splitted = word.split(" ");
+            for(var i = 0; i < splitted.length; i++){
+                if(splitted);          
+            }
+        }
+        //vrati 
+        return 
     }
 }
 
 class Game{
-    
+
+    //deklarace hry
+    init(){
+        // this.errorMsg.set('jdi', {missing_argument: "Jdi očekával 3 argumenty."});
+    }
     constructor(){
         this.rooms = ["velin", "dolni pauba", "nakladovy prostor", "horni paluba"];
-        this.commands = ['jdi', 'zvedni', 'pomoc', 'polož', 'rozhlédni se'];
-       // this.state = false;//nelze prijimat prikazy 
+        this.commands = ['jdi', 'zvedni', 'pomoc', 'poloz', 'rozhledni se', 'prozkoumej'];
+        this.parser = new Parser();
+        this.room = "velin"; 
+        var roomMap = new Map();
+        const bag_size = 5;
+        var bag = 0;
+        //this.intro();
+
+        for(let room in this.rooms){
+            roomMap.set(room, new Room); 
+        } 
+
+        this.fnMap = {
+            "jdi": this.changeRoom,
+            "zvedni": this.pickUp,
+            "pomoc": this.help,
+            "poloz": this.drop,
+            "rozhledni se": this.describe //mozna tu ma byt carka
+        }
     }
-    
+
+
+
+    //posledni slova by měla být 
+    changeRoom(command){
+
+    }
+
+    pickUp(sep){
+        var length = sep.length;
+        if(this.bag == bag_size){
+            println("Máš plné ruce. Nemůžeš brát další předměty.");
+            return;
+        }
+        //spust parser na veci, ktere jsou okolo
+    }
+
+    help(separated){
+        println("Tady se časem objeví výpis manuálu.");
+    }
+
+    drop(){
+        
+    }
+
+    //vypis popis lokality
+    describe(){}
+
     intro(){
         println("Všude kolem je slyšet hluk z rozehřívání motorů.");
         println("Odpočítávání je připraveno");
@@ -56,13 +134,18 @@ class Game{
         println("Najednou se ozve tlumená rána.", 15 * 1000); 
     }
 
-    command(text){
-        text.normalize("NFD").replace(/[\u0300-\u036f]/g, ""); 
-        console.log(text);
-        const sep = text.split(" ");
+    //prikazy budou ve forme - sloveso, slova mezi, (mistnost, predmet, vec);
+    handleCommand(command){
+        command = this.parser.removePunctuation(command);
+        
+        const sep = command.split(" ");
         var size = sep.length;
-    }    
-
+        if(!game.commands.includes(sep[0])){
+            println("Zadal jsi neplatný příkaz. Pro vypsání nápovědy zadej příkaz 'pomoc'.");
+            return;
+        }
+        this.fnMap[sep[0]](sep); 
+    }
 }
 
 
@@ -71,13 +154,48 @@ var game = new Game();
 //document.addEventListener("keydown", keyPressed);
 window.addEventListener("load", game.intro);
 
-function mojefunkce(){
+function keyPressed(e){
 
-    var promenna = document.getElementById('game');
-    promenna.innerHTML = 'posílám zprávu';
+    if(e.keyCode == 13){
+        var input = document.getElementById('input');
+        //println(input.value);
+        //parse
+        game.handleCommand(input.value);
+        input.value = "";
+        /*const newDiv = document.createElement('div');
+        newDiv.setAttribute("class", "text");
+        const newContent = document.createTextNode("tady je super text");
+        newDiv.appendChild(newContent);
+        document.body.div.insertBefore(newDiv, game);
+        */
+    }
+}
+/*function init(){
+
+//check if cookie exists
+//pokud ne - vypis uvodni informace 
+//vypsat nejake nove informace
+//document.getElementById("console").innerHTML = "novy text";
+    insert_before("prompt", "Vitej v textove hre.");
 }
 
+function validate(){
+    //let x = document.forms["user_input"]["input"].value;
+        insert_before("prompt", x);
+}
 
+*/
+    /*
+    var hodnota = document.getElementById("string").value;
+    document.getElementById("prompt").innerHTML = hodnota;
+//var data = new FormData();
+//data.append("neco", document.getElementById("string").value);
+//for (let [k, v] of data.entries()) { console.log(k, v); }
+
+//insert_before("prompt", user_input);
+//parse
+//actions
+}*/
 //document.body.onload = addElement;
 //window.addEventListener("load", init);
 //document.addEventListener("submit", validate);
@@ -94,58 +212,3 @@ function insert_before(before_div, text){
     newDiv.appendChild(newContent);
     section.insertBefore(newDiv, currentDiv);
 } */
-
-
-
-function keyPressed(e){
-//    var game = document.getElementById("game");
-
-    if(e.keyCode == 13){
-        var input = document.getElementById('input');
-        println(input.value);
-        //parse
-        game.command(input.value); 
-        input.value = "";
-        /*const newDiv = document.createElement('div');
-        newDiv.setAttribute("class", "text");
-        const newContent = document.createTextNode("tady je super text");
-        newDiv.appendChild(newContent);
-        document.body.div.insertBefore(newDiv, game);
-        */
-    }
-
-    /*if(e.keyCode == 8){
-        game.innerHTML = game.innerHTML.slice(0, game.innerHTML.length - 1);
-    }
-    else{
-    
-        var  cont = document.getElementById("game");
-        cont.innerHTML += event.key; 
-    }*/
-}
-/*function init(){
-
-    //check if cookie exists
-    //pokud ne - vypis uvodni informace 
-    //vypsat nejake nove informace
-    //document.getElementById("console").innerHTML = "novy text";
-    insert_before("prompt", "Vitej v textove hre.");
-}
-
-function validate(){
-    //let x = document.forms["user_input"]["input"].value;
-        insert_before("prompt", x);
-}
-
-*/
-/*
-    var hodnota = document.getElementById("string").value;
-    document.getElementById("prompt").innerHTML = hodnota;
-    //var data = new FormData();
-    //data.append("neco", document.getElementById("string").value);
-    //for (let [k, v] of data.entries()) { console.log(k, v); }
-
-    //insert_before("prompt", user_input);
-    //parse
-    //actions
-}*/
