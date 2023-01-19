@@ -20,20 +20,12 @@ function println(text, delay = 0){
     }    
 }
 
-class Objects{
-    constructor(name , description){
-        this.name = name;
-        this.description = description;
-    }
-}
 
-class Room{
-
-    constructor(name, description, items){
-        this.description = description;
-        this.name = name; 
-        this.items = items;
-       // this.directions = dir;
+//pomocna trida, kterou vracime jako vyhodnoceni priakzu
+class ReturnObject{
+    constructor(length, sep){
+        this.length = length;
+        this.sep = sep;
     }
 }
 
@@ -54,7 +46,7 @@ class Parser{
         var score = 0;
     }
 
-    //vybereme nejvhodnejsi slova 
+    //vybereme nejvhodnejsi slova
     mostApropriate(sep, set_of_words){
         var command = "";
         for(var word in set_of_words){
@@ -66,45 +58,117 @@ class Parser{
         //vrati 
         return 
     }
+
+    handleCommand(separatedCommand, listOfPoss){
+
+        //vyber vhodny prikaz 
+        //var command = mostApropriate(command, listOfPoss);
+        //zatim budeme uvazovat jednoslovne prikazy
+
+        var length = 1;
+        var command = separatedCommand[0];
+
+        return new ReturnObject(length, command);
+        
+    }
 }
+
+class Objects{
+    constructor(name , description, immutability = false){
+        this.name = name;
+        this.description = description;
+        this.immutable = immutability; 
+        //tady jsou uvedeny defaultni funkce, pro predefinovani je nutne u konkretniho objektu funkce prepsat 
+        this.fnMap = {
+            "pickUp": this.pickUp;
+            "drop": this.drop;
+            "describe": this.describe;
+        }
+        //prommenne lze podle potreby pridavat ke konkretnim objektum 
+        this.varMap = {
+            //"pickUpErrorMessage" : "Nějak se ti nedaří objekt zvednout.",
+            //"dropErrorMessage":  "Nějak se ti nedaří objekt položit."
+        }
+    }
+    describe(){
+        println(this.description);
+    }
+    
+    //navratova hodnota, jestli se zvednuti podarilo - treba jestli neni moc tezka vec
+    //standardni funkce pro pickup a drop
+    pickUp(){
+        println("Zvedl jsi " + this.name);
+        if(this.pickUpErrorMessage != ''){ println(errorMessage); }
+        return true;
+    }
+    
+    drop(){
+        println("Položil jsi " + this.name);
+        if(this.varMap.has('pickUpErrorMessage')){ println(errorMessage); }
+        return true;
+    }
+
+}
+class Room{
+
+    constructor(name, description = ""){
+        this.mapOfObjects = new Map();
+        this.description = description;
+        this.name = name;
+
+        //funkce, ktere volame na objekty
+        this.fnMap = { }
+
+        this.mapOfObjects = {}
+    }
+    listOfObjects(){
+        return Array.from(this.mapOfObjects.keys());
+    }
+}
+
 
 class Game{
 
     //deklarace hry
     init(){
-        // this.errorMsg.set('jdi', {missing_argument: "Jdi očekával 3 argumenty."});
+        this.roomMap['velin'].description = " Nějaký super hustý popis velína."; 
+        this.roomMap['dolni pauba'] = " Dalši popis paluby";
     }
+
     constructor(){
-        this.rooms = ["velin", "dolni pauba", "nakladovy prostor", "horni paluba"];
-        this.commands = ['jdi', 'zvedni', 'pomoc', 'poloz', 'rozhledni se', 'prozkoumej'];
         this.parser = new Parser();
-        this.room = "velin"; 
+        this.room = "velin";
         var roomMap = new Map();
         const bag_size = 5;
         var bag = 0;
-        //this.intro();
 
         for(let room in this.rooms){
-            roomMap.set(room, new Room); 
-        } 
+            roomMap.set(room, new Room);
+        }
 
         this.fnMap = {
             "jdi": this.changeRoom,
             "zvedni": this.pickUp,
             "pomoc": this.help,
             "poloz": this.drop,
-            "rozhledni se": this.describe //mozna tu ma byt carka
+            "prozkoumej": this.describe 
         }
+        this.init();
     }
-
-
+    
+    returnCommandList(){ return Array.from(this.fnMap.keys()); }
+    returnRoomsList(){ return Array.from(this.roomMap.keys()); }
 
     //posledni slova by měla být 
-    changeRoom(command){
-
+    changeRoom(sep){
+        var toRoom = parser.mostApropriate(sep, this.returnRoomsList()); 
+        if(toRoom.length == 0){
+            println("Do takové místnosti nemůžeš jít."); 
+        } 
     }
 
     pickUp(sep){
+        var obj = parser.mostApropriate(sep, this.returnRoomsList()); 
         var length = sep.length;
         if(this.bag == bag_size){
             println("Máš plné ruce. Nemůžeš brát další předměty.");
@@ -113,16 +177,23 @@ class Game{
         //spust parser na veci, ktere jsou okolo
     }
 
-    help(separated){
+    help(sep){
         println("Tady se časem objeví výpis manuálu.");
     }
 
-    drop(){
-        
+    dropObject(sep){
+        println("Objetky ještě nejdou brát."); 
     }
 
     //vypis popis lokality
-    describe(){}
+    describe(sep){
+         
+        var place = parser.mostApropriate(sep, this.returnCommandList()); 
+        if(place.command == "" || place.command == this.room){
+            (roomMap[room](sep.slice(place.length))).describe(sep); 
+        }
+        this.roomMap[this.room]
+    }
 
     intro(){
         println("Všude kolem je slyšet hluk z rozehřívání motorů.");
@@ -135,22 +206,26 @@ class Game{
     }
 
     //prikazy budou ve forme - sloveso, slova mezi, (mistnost, predmet, vec);
-    handleCommand(command){
-        command = this.parser.removePunctuation(command);
+    inputCommand(text){
+        if(text == "") return;
+        var command = parser.removePunctuation(text);
+        var sep = command.split(" ");
+        //najdi nejlepsi prikaz
+        var retObj = parser.handleCommand(sep,this.returnCommandList());
         
-        const sep = command.split(" ");
-        var size = sep.length;
-        if(!game.commands.includes(sep[0])){
-            println("Zadal jsi neplatný příkaz. Pro vypsání nápovědy zadej příkaz 'pomoc'.");
+        if(command = ""){
+            println("Zadal jsi neznámý příkaz. Pro vypsání nápovědy zadej příkaz 'pomoc'.");
             return;
         }
-        this.fnMap[sep[0]](sep); 
+        //zavolej funkci se zmensenym listem parametru 
+        this.fnMap[retObj.command](sep.slice(retObj.length));
     }
 }
 
 
 
-var game = new Game(); 
+var game = new Game();
+var parser = new Parser(); 
 //document.addEventListener("keydown", keyPressed);
 window.addEventListener("load", game.intro);
 
@@ -158,8 +233,6 @@ function keyPressed(e){
 
     if(e.keyCode == 13){
         var input = document.getElementById('input');
-        //println(input.value);
-        //parse
         game.handleCommand(input.value);
         input.value = "";
         /*const newDiv = document.createElement('div');
