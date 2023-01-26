@@ -103,10 +103,10 @@ class Parser{
 }
 
 class Objects{
-    constructor(name , description, immutability = false){
+    constructor(name , description, immutable = false){
         this.name = name;
         this.description = description;
-        //this.immutable = immutability; 
+        this.immutable = immutable; 
         this.fnMap = new Map();
         this.objMap = new Map(); 
         this.fnMap.set("pickUp", this.pickUp);
@@ -114,6 +114,7 @@ class Objects{
         this.fnMap.set("describe", this.describe);
         
     }
+
     describe(sep){
         println(this.description);
     }
@@ -123,31 +124,31 @@ class Objects{
         println("Na " + _this.name + "nemůžeš zavolat tento příkaz");
     }
 
-    //navratova hodnota, jestli se zvednuti podarilo - treba jestli neni moc tezka vec
-    //standardni funkce pro pickup a drop
-    /*pickUp(){
-        println("Zvedl jsi " + this.name);
-        if(this.pickUpErrorMessage != ''){ println(errorMessage); }
+    pickUp(sep, command, _this){
+        if(_this.immutable == true){
+            println(_this.name + " nemůžeš vzít.");
+            return false;
+        }
         return true;
     }
 
-    drop(){
-        println("Položil jsi " + this.name);
-        if(this.varMap.has('dropErrorMessage')){ println(errorMessage); }
-        return true;
-    }*/
+     //nejake specialni predmety budou mit vlasnti funkci na dropnuti
+    drop(sep, command, _this){ return true; }
 }
+
 class Room{
 
     constructor(name, description = ""){
         this.objMap = new Map(); //mapa objektů
         this.fnMap = new Map();  //mapa funkcí
-        this.fnMap.set("moveTo", this.moveTo); //zakladni funkce 
         this.description = description;
         this.name = name;
         this.nbrs = []; //seznam sousedu
         
         this.fnMap.set("describe", this.describe);
+        this.fnMap.set("moveTo", this.moveTo); //zakladni funkce 
+        this.fnMap.set("pickUp", this.moveTo); //zakladni funkce 
+        this.fnMap.set("drop", this.moveTo); //zakladni funkce 
 
         //funkce, ktere volame na objekty
     }
@@ -159,13 +160,25 @@ class Room{
         }
         return 0; //neni v seznamu sousedu, nelze se presunout  
     }
+   
+
+    //funkce, ktere vraci true, pokud lze objekt zvednout a odebrat
+    pickUp(sep, command, _this){
+        var object = parser.handleCommand(sep, makeListOf(_this.objMap));
+        if(object.command == ""){
+            println("Tento objekt bohužel nemáš po ruce.");
+            return false;
+        }
+        return true;
+    }
     
+    drop(sep,obj, _this){
+        return true;    
+    }
+
     describe(sep,_this){
         println(_this.description);
     }
-    /* listOfObjects(){
-        return Array.from(this.mapOfObjects.keys());
-    } */
 }
 
 //deklarace hry
@@ -173,7 +186,7 @@ class Game{
 
     constructor(){
        // this.parser = new Parser();
-        var bag = new Room("batoh");
+        this.bag = new Room("batoh");
         this.room = "velin";
        
         this.roomMap = new Map();
@@ -183,7 +196,7 @@ class Game{
         this.fnMap.set("rozhledni se", this.describe);
         this.fnMap.set("pomoc", this.help );
         this.fnMap.set("poloz", this.drop);
-        this.fnMap.set("zvedni", this.pickUp);
+        this.fnMap.set("vezmi", this.pickUp);
 
     }
 
@@ -241,30 +254,24 @@ class Game{
 
     //rovnou presmerovat na room
     pickUp(sep, _this){
+        
+        if(sep.length == 0){
+            println("Musíš uvést, co chceš zvednout");
+            return false;
+        }
+
         //zvedat objekty budeme v mistnosti
-        var obj = parser.handleCommand(sep, makeListOf((_this.roomMap[_this.room]).objMap)); //vrati predmety, ktere se nachazeji v mistnosti 
-        sep = obj.sep;
+        var room = _this.roomMap.get(_this.room);
+        var state = room.fnMap.get("pickUp")(sep, "", room);
+        //var place = parser.handleCommand(sep, rooms);
+        state = Math.max(state, _this.bag.fnMap.get("drop")(sep, "", _this.bag));
+        
 
-        if(obj.command == ""){
-            println("Musíš uvést, jaký předmět chceš zvednout.");
-            return;
+        if(state == true){
+            println("Zvedl jsi objekt");
         }
 
-        //mozna by mohlo nastavit nejakou promennou stav, jestli se zvednuti podarilo
-        this.roomMap[this.room].fnMap["pickUp"](sep); 
-        //jestli se podarilo umisteni do batohu
-        this.roomMap[this.bag].fnMap["drop"](sep); 
 
-        //pokud se podarilo predmet zvednou i polozit
-        if(true){
-            var element = this.roomMap[this.room].objMap[obj.command]; 
-        }
-
-        var length = sep.length;
-        if(this.bag == bag_size){
-            println("Máš plné ruce. Nemůžeš brát další předměty.");
-            return;
-        }
         //spust parser na veci, ktere jsou okolo
     }
 
@@ -320,15 +327,14 @@ function init(){
     game.roomMap.set('velin',new Room("velin", "Nacháziš se ve velíně raketoplánu. Na palubní desce před tebou červeně blikají nejrůznější přepínače a kontrolky. Alarm poškození levého křídla se rozhoukal vysokým tónem."));
     game.roomMap.set('nakladovy prostor',new Room('nakladovy prostor', "Kolem vidíš sklad nejrůznějšího nářadí. Bohudík je upevněné a nepoletuje si tu jen tak. Po bližším průzkumu se ti uleví. Technici NASA počítali skoro se vším. Na pravé straně se nachází magnetická stěna, na které jsou připevněny veškeré nástroje, které by se mohly hodit - aku vrtačka, plazmová svářečka, dokonce i náhradní keramické destičky."));
     game.roomMap.set('prechodova komora',new Room('prechodova komora', "Místnost tvaru koule o poloměru asi 1,5 metru. Kolem sebe vidíš tlačítka na otevření dveří vedoucí do velína a do volného vesmíru."));
+    game.roomMap.set('volny vesmir',new Room('volný vesmír', "Naskytne se ti nádherný výhled na planetu Zemi. Jsou také vidět hvězdy, neboť je zrovna noc. Nejspíš zrovna přelétme nad Tichým oceánem, protože nejsou na Zemi vidět skoro žádná světla."));
 
     //velin
     game.roomMap.get('velin').objMap.set("vysilacka", new Objects("vysilacka", "Dlouhovnná vysílačka, která slouží ke komunikaci s odletovým střediskem."));
     game.roomMap.get('velin').objMap.set("nabijecka", new Objects("vysilacka", "Nabíječka na vysílačku s univerzálním NASA konektorem."));
-    game.roomMap.get('velin').objMap.set("ovládací panel", new Objects("ovládací panel", "Při bližším pohledu na hlavní kontrolní panel na něm vidíš tlačítka "));
-    game.roomMap.get('velin').nbrs = ["nakladovy prostor"];
-    
+    game.roomMap.get('velin').objMap.set("ovládací panel", new Objects("ovládací panel", "Při bližším pohledu na hlavní kontrolní panel na něm vidíš tlačítka.", true));
+    game.roomMap.get('velin').nbrs = ["nakladovy prostor", "prechodova komora"];
 
-    
     //nakladovy prostor
     game.roomMap.get('nakladovy prostor').objMap.set("aku vrtacka", new Objects("aku vrtacka", "Vratčka, kterou jde použít jako elektrický šroubovák. Je poháněná elektřinou z baterie.")); //neni nabita
     game.roomMap.get('nakladovy prostor').objMap.set("pilnik", new Objects("pilnik", "Jemný pilník na železo."));
@@ -339,6 +345,12 @@ function init(){
     
     //prechodova komora
     game.roomMap.get('prechodova komora').objMap.set("skafandr", new Objects("skafandr", "Vesmírný skafandr, sloužící k pohybu ve volném prostoru."));
+    game.roomMap.get('prechodova komora').nbrs = ["velin", "volny vesmir"];
+
+    //volny vesmir 
+    game.roomMap.get('volny vesmir').objMap.set("raketoplan", new Objects("raketoplán", "Raketoplán v celé své kráse. Jenom křídlo nevypadá dobře.", true));
+    game.roomMap.get('volny vesmir').objMap.set("poskozene kridlo", new Objects("poškozené křídlo", "V pravém křídle zeje velká díra - to nevypadá dobře. Takhle by při přistání raketoplán shořel v atmosféře.",true)); //posledni parametr je immutable
+    game.roomMap.get('volny vesmir').nbrs = ["prechodova komora"];
 }
 
 function keyPressed(e){
