@@ -6,7 +6,7 @@ document.addEventListener("keydown", (event) => { keyPressed(event); });
 
 //vypise text do div hra
 function println(text, delay = 0){
-    delay = 0; 
+    //delay = 0; 
     if(delay != 0){
         setTimeout(()=> { println(text)}, delay); 
     }
@@ -38,21 +38,25 @@ class Parser{
         return text;
     }
 
-    //vybereme nejvhodnejsi slova
-    mostApropriate(sep, set_of_words){
-        var command = "";
-        for(var word in set_of_words){
-            var splitted = word.split(" ");
-            for(var i = 0; i < splitted.length; i++){
-                if(splitted);          
-            }
+
+    
+/*    longestSubstring(word1, word2){
+        var l1 = word1.length;
+        var l2 = word2.length;
+
+        var max = 0;
+
+        //pro vsechny zacatky word1
+        for(var i = 0; i < l1 - max; i++){
+            for(var j = 0; j < l2 - max; j++){
+                var s = i;
+                var t = j;
+                var l = 0;
+                while(word1 ==  
         }
-        //vrati 
-        return 
-    }
+    }*/
 
 
-    //funkce spočítá, jak moc si odpovídají slova
     fits(word1, word2){
         var score = 0;
         //word1 je vstup, word2 je slovo ze hry
@@ -110,13 +114,10 @@ class Objects{
         this.helpMsg = helpMsg; //zobrazi se pri zadani napovedy k predmetu
         this.fnMap = new Map();
         this.objMap = new Map(); 
-        this.callFn = new Map(); //mapa funkci, ktere lze zavolat na objekt
-    
         this.fnMap.set("pickUp", this.pickUp);
         this.fnMap.set("drop", this.drop);
         this.fnMap.set("describe", this.describe);
         this.fnMap.set("help", this.help);
-         
     }
 
     describe(_this){
@@ -140,9 +141,6 @@ class Objects{
     help(_this){
         println(_this.helpMsg);
     }
-
-     //nejake specialni predmety budou mit vlasnti funkci na dropnuti
-    drop(sep, command, _this){ return true; }
 }
 
 class Room{
@@ -197,12 +195,6 @@ class Room{
 
     moveTo(sep,command, _this){
         return 1;
-        /*
-        if(_this.nbrs.includes(command)){
-            return 1;        
-        }
-        return 0; //neni v seznamu sousedu, nelze se presunout  
-        */
     }
    
 
@@ -211,29 +203,32 @@ class Room{
         var object = parser.handleCommand(sep, makeListOf(_this.objMap));
         if(object.command == ""){
             println("Tento objekt bohužel nemáš po ruce.");
-            return {
-                obj: undefined,
-                res: 1
-            };
+            return { obj: undefined, res: 1 };
         }
 
         var obj = _this.objMap.get(object.command);
         var stat = obj.fnMap.get("pickUp")(sep, obj);
-
-        return {
-            obj: _this.objMap.get(object.command),
-            res: stat
-        };
+        //uspesne sebrani
+        if(stat == 0){
+            _this.objMap.delete(object.command); //smaze zaznam
+            return{ obj: obj, res: 0 }
+        }
+        //neuspesne sebrani
+        return { obj: undefined, res: 1 };
     }
 
     //v teto mistnosti chceme odlozit dany objekt
-    drop(object, _this){
-        var object = _this
-        return object.fnMap.get("drop")(_this, object); 
+    drop(object, _this, force = false){
+        var state = object.fnMap.get("drop")(_this, object); 
+        if(state == true || force){
+            _this.objMap.set(object.name, object); 
+            return true;
+        }
+        return false;
     }
 
-    describe(sep,_this){
-        if(sep.length == 0) {println(_this.description); return;}
+    describe(sep,_this, room = false){
+        if(room) {println(_this.description); return true;}
         var object = parser.handleCommand(sep, makeListOf(_this.objMap));
         if(object.command == ""){
             return false;
@@ -249,7 +244,7 @@ class Game{
 
     constructor(){
        // this.parser = new Parser();
-        this.bag = new Room("batoh");
+        this.bag = new Room("batoh", "Nejaky popis batohu.");
         this.room = "velin";
        
         this.roomMap = new Map();
@@ -339,22 +334,21 @@ class Game{
 
         //zvedat objekty budeme v mistnosti
         var room = _this.roomMap.get(_this.room);
-        var stateObj = room.fnMap.get("pickUp")(sep, "", room);
+        var state = room.fnMap.get("pickUp")(sep, room);
 
-        if(stateObj.res == 1){
+        if(state.res == 1){
             //chybová hláška by měla být už vypsána
             return; 
         }
         //bag bude mít speciálně implementovanou funkci drop
-        var state = _this.bag.fnMap.get("drop")(stateObj.obj, _this.bag);
-
-        if(state == false) return;
+        var drop = _this.bag.fnMap.get("drop")(state.obj, _this.bag);
         
-        //premisti vec
-        var obj = room.objMap.get(stateObj.obj);
-        room.objMap.delete(stateObj.obj);
-        _this.bag.objMap.set(stateObj.obj, obj);
-        println("Objekt sebrán.");
+        //musime vratit objekt 
+        if(drop == false){
+            room.fnMap.get("drop")(state.obj, room, true); //force drop 
+            return;
+        }
+        println("Vzal jsi " + state.obj.name); 
     }
 
     help(sep, _this){
@@ -398,49 +392,45 @@ class Game{
             return false;
         }
         
-        var result = _this.bag.fnMap.get("pickUp")(sep, _this.bag);
-        if(state == 1) return; //z nejakeho duvodu nejde objekt polozit
-        
+        var objRes = _this.bag.fnMap.get("pickUp")(sep, _this.bag);
+        if(objRes.res == 1) return; //z nejakeho duvodu nejde objekt polozit
+       
         //zvedat objekty budeme v mistnosti
         var room = _this.roomMap.get(_this.room);
-        var stateObj = room.fnMap.get("drop")(sep, "", room); //jestli muzeme objekt odlozit
+        var stateObj = room.fnMap.get("drop")(objRes.obj, room); //jestli muzeme objekt odlozit
 
         if(stateObj.res == 1){
-            //chybová hláška by měla být už vypsána
+            _this.bag.fnMap.get("drop")(objRes.obj, _this.bag , true); //force drop 
             return; 
         }
-        //bag bude mít speciálně implementovanou funkci drop
-
-        //objekt nejde odlozit
-        if(state.res == 1)
-            return; 
-        if(state == 2) return;
-        
-        //premisti vec
-        var obj = _this.bag.objMap.get(stateObj.obj);
-        _this.bag.objMap.delete(stateObj.obj);
-        room.objMap.set(stateObj.obj, obj);
-        println("Odložil jsi objekt."); 
+        println("Položil jsi " + objRes.obj.name); 
     }
 
     //vypis popis lokality
     describe(sep, _this){
         var rooms = makeListOf(_this.roomMap); 
+        rooms.push("batoh"); 
         var place = parser.handleCommand(sep, rooms);
 
+        var state = 0;
         if(place.command == _this.room || sep.length == 0){
-            sep = place.sep; 
             var thisRoom = _this.roomMap.get(_this.room);
-            thisRoom.fnMap.get("describe")(sep, thisRoom);
+            thisRoom.fnMap.get("describe")(sep, thisRoom, true);
             return;
         }
-        //vyzadnovan popis mistnosti, ktery neni
+        if(place.command == "batoh"){
+            _this.bag.fnMap.get("describe")(sep, _this.bag, true); 
+            return;
+        }
+
+        //vyzadnovan popis mistnosti, ktery neni v dosahu
         if(rooms.includes(place.command)){
             println("Jejda, nemáš kouzelné brýle, abys viděl skrz zdi."); 
+            return;
         }
         
         //popsat veci v batohu, nebo v mistnosti
-        if(_this.bag.fnMap.get('describe')(sep, _this.bag)) return; //došlo k vypsani
+        if(_this.bag.fnMap.get('describe')(sep, _this.bag) == true) return; //došlo k vypsani
         var thisRoom = _this.roomMap.get(_this.room);
         if(thisRoom.fnMap.get('describe')(sep, thisRoom) == true) return; //došlo k vypsani
 
