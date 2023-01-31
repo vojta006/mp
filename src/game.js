@@ -6,7 +6,7 @@ document.addEventListener("keydown", (event) => { keyPressed(event); });
 
 //vypise text do div hra
 function println(text, delay = 0){
-    //delay = 0; 
+    delay = 0; 
     if(delay != 0){
         setTimeout(()=> { println(text)}, delay); 
     }
@@ -16,14 +16,6 @@ function println(text, delay = 0){
     }    
 }
 
-//pomocna trida, kterou vracime jako vyhodnoceni priakzu
-class ReturnObject{
-    constructor(length, command, sep){
-        this.length = length;
-        this.command = command;
-        this.sep = sep; 
-    }
-}
 
 class Parser{
 
@@ -38,71 +30,52 @@ class Parser{
         return text;
     }
 
-
-    
-/*    longestSubstring(word1, word2){
+    //word1 je slovo od uzivatele
+    longestSubstring(word1, word2){
         var l1 = word1.length;
         var l2 = word2.length;
 
         var max = 0;
-
         //pro vsechny zacatky word1
-        for(var i = 0; i < l1 - max; i++){
-            for(var j = 0; j < l2 - max; j++){
-                var s = i;
-                var t = j;
-                var l = 0;
-                while(word1 ==  
-        }
-    }*/
-
-
-    fits(word1, word2){
-        var score = 0;
-        //word1 je vstup, word2 je slovo ze hry
-        var l = word1.length;
-        
-        for(var i = 0; i < l - 2; i++){
-            if(word2.includes(word1.substring(i, i + 4)) == true){
-                return 0;
-            }
-        }
-        return Number.POSITIVE_INFINITY;
-    }
-
-
-    //najdeme nejlepsi vyraz 
-    handleCommand(sep, listOfPoss){
-        
-        var l = sep.length;
-        var max_score = 0;
-        var minScore =  Number.POSITIVE_INFINITY;//nejaka hodnota pro infinity
-        var minInfo;
-
-        for(var j = 0; j < listOfPoss.length; j++){
-            var sp = listOfPoss[j].split(" "); //splitneme prikaz mezerami
-            for(var i = 0; i < sep.length - sp.length + 1; i++){
-                var val = this.fits(sep[i], sp[0]); //testujeme jenom prvni slovo
-                if(val < minScore){
-                    minScore = val;
-                    minInfo = {
-                        i: i, //zacatek commandu
-                        j: j, //index commandu
-                        l: sp.length, //delka prikazu
-                    } 
+        for(var i = 0; i < l1; i++){
+            for(var j = 0; j < l2; j++){
+                var pole = [];
+                var l = 0; //delka shody
+                for(var k = 0; k < Math.min(l1 - i, l2 - j); k++){
+                    if(word1[i+k] != word2[j+k]) break;
+                    l++;
                 }
+                pole.push(l);
+                max = Math.max(l, max);
             }
         }
-        
-        //nejaka konstanta 
-        if(minInfo === undefined || minScore > 1000){
-            return new ReturnObject(-1, "", sep); //nepovedlo se nic najit
-        }
-        
-        //odstrani vsechna slova, vcetne provedeneho prikazu
-        sep = sep.slice(minInfo.i + minInfo.l);
+        //word1 je obraz
+        return max/Math.max(word1.length, word2.length); 
+    }
+    
+    handleCommand(sep, listOfPoss){
 
-        return new ReturnObject(minInfo.l, listOfPoss[minInfo.j], sep);
+        var max = 0;
+        for(var j = 0; j < listOfPoss.length; j++){
+            var sp = listOfPoss[j].split(" ");
+            var done = false;
+            for(var i = 0; i < sp.length; i++){
+                var mx = 0;
+                var id = -1; 
+                for(var k = 0; k < sep.length; k++){
+                    var act = this.longestSubstring(sep[k], sp[i]);
+                    if(act > mx){ mx = act; id = k; }
+                } 
+                //nejaka konstanta 
+                if(mx > 0.5){
+                    done = true;
+                    sep.splice(id, 1); //vymaz prvek z pole     
+                } 
+            }
+            //neco je odmazano
+            if(done == true) return {command: listOfPoss[j], sep: sep};
+        }
+        return {command: "" , sep: sep}; 
     }
 }
 
@@ -112,6 +85,8 @@ class Objects{
         this.description = description;
         this.immutable = immutable; 
         this.helpMsg = helpMsg; //zobrazi se pri zadani napovedy k predmetu
+
+        this.mapFn = new Map(); //implementace funkci  
         this.fnMap = new Map();
         this.objMap = new Map(); 
         this.fnMap.set("pickUp", this.pickUp);
@@ -161,10 +136,24 @@ class Room{
         this.fnMap.set("pickUp", this.pickUp); //zakladni funkce 
         this.fnMap.set("drop", this.drop); //zakladni funkce 
         this.fnMap.set("help", this.help); //zakladni funkce 
+        this.fnMap.set("command", this.command); //zakladni funkce 
 
         //funkce, ktere volame na objekty
     }
-    
+
+    //prikazy, ktere prijimaji objekty
+    command(sep, _this){
+        var res = 0;
+        for(let [key, obj] of _this.objMap){
+            var comm = parser.handleCommand(sep, makeListOf(obj.mapFn));
+            sep = comm.sep; 
+            if(comm.command == "") continue;
+            if(obj.mapFn.get(comm.command)(sep, obj) == true) {res = true; break; } //kdyz je prvni uspesny, tak
+        } 
+        if(res == 0) return false;
+        return true; 
+    }
+
     moveFrom(sep, where, _this){
         if(_this.nbrs.includes(where)){
             return 0; //muzeme se presunout
@@ -226,6 +215,7 @@ class Room{
         }
         return false;
     }
+    
 
     describe(sep,_this, room = false){
         if(room) {println(_this.description); return true;}
@@ -251,11 +241,21 @@ class Game{
         this.fnMap = new Map();
 
         this.fnMap.set("jdi", this.moveTo);
+        this.fnMap.set("presun se", this.moveTo);
+
         this.fnMap.set("popis", this.describe);
+        this.fnMap.set("rozhledni se", this.describe);
+
         this.fnMap.set("pomoc", this.help );
+        this.fnMap.set("manual", this.help );
+
+        this.fnMap.set("poloz", this.drop);
+        this.fnMap.set("odloz", this.drop);
+
         this.fnMap.set("poloz", this.drop);
         this.fnMap.set("vezmi", this.pickUp);
-
+        this.fnMap.set("seber", this.pickUp);
+        this.fnMap.set("uchop", this.pickUp);
     }
 
     //prikazy budou ve forme - sloveso, slova mezi, (mistnost, predmet, vec);
@@ -276,8 +276,12 @@ class Game{
         if(retObj.command == ""){
             //pokud bag umi prijimat prikazy 
             var thisRoom = this.roomMap.get(this.room);
-
-            if(this.bag.fnMap.has("command") && this.bag.fnMap("command")(sep, this.bag) == false){
+            
+            //command se ujal
+            if(thisRoom.fnMap.get("command")(sep, thisRoom) == true){
+                return;          
+            }
+            if(this.bag.fnMap.get("command")(sep, this.bag) == false){
                 println("Zadal jsi neznámý příkaz. Pro vypsání nápovědy zadej příkaz 'pomoc'.");
             }
         }
@@ -293,8 +297,9 @@ class Game{
             return false;
         } 
         var toRoom = parser.handleCommand(sep, makeListOf(_this.roomMap));
-        if(toRoom == ""){
+        if(toRoom.command == ""){
             println("Nenašli jsme odpovídající místnost");
+            return;
         }
 
         if(toRoom.command == _this.room){
@@ -450,11 +455,10 @@ class Game{
 
 }
 
-
-
 var game = new Game();
 var parser = new Parser(); 
-//document.addEventListener("keydown", keyPressed);
+
+//deklarace hry
 window.addEventListener("load", game.intro);
 
 function init(){
