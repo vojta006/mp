@@ -16,6 +16,8 @@ function println(text, delay = 0){
     }    
 }
 
+//za time milisekund nastavi game.action na true
+function heldUp(time){ setTimeout(() => { game.action = false; }, time); }
 
 class Parser{
 
@@ -148,10 +150,9 @@ class Room{
             var comm = parser.handleCommand(sep, makeListOf(obj.mapFn));
             sep = comm.sep; 
             if(comm.command == "") continue;
-            if(obj.mapFn.get(comm.command)(sep, obj) == true) {res = true; break; } //kdyz je prvni uspesny, tak
+            if(obj.mapFn.get(comm.command)(sep, obj, _this) == true) {return true;} //kdyz je prvni uspesny, tak
         } 
-        if(res == 0) return false;
-        return true; 
+        return false; 
     }
 
     moveFrom(sep, where, _this){
@@ -236,6 +237,7 @@ class Game{
        // this.parser = new Parser();
         this.bag = new Room("batoh", "Nejaky popis batohu.");
         this.room = "velin";
+        this.action = false; //nechceme prijimat dva prikazy najednou
        
         this.roomMap = new Map();
         this.fnMap = new Map();
@@ -261,6 +263,7 @@ class Game{
     //prikazy budou ve forme - sloveso, slova mezi, (mistnost, predmet, vec);
     inputCommand(command){
         if(command == "") return;
+        if(this.action == true) { println("Nemůžeš vykonávat dvě akce najednou. "); return; }
 
         //uprav prikaz
         command = parser.removePunctuation(command);
@@ -293,7 +296,7 @@ class Game{
     moveTo(sep, _this){
         
         if(sep.length == 0){
-            println("Musíš zadat parametr.");
+            println("Musíš zadat, kam chceš jít.");
             return false;
         } 
         var toRoom = parser.handleCommand(sep, makeListOf(_this.roomMap));
@@ -450,6 +453,7 @@ class Game{
         }
         println("Je odstartováno.", 11 * 1000);
         println("Najednou se ozve tlumená rána.", 15 * 1000); 
+        heldUp(15*1000);
         init(); //nadeklaruj vse 
     }
 
@@ -463,7 +467,7 @@ window.addEventListener("load", game.intro);
 
 function init(){
     //mistnosti 
-    game.roomMap.set('velin',new Room("velin", "Nacháziš se ve velíně raketoplánu. Na palubní desce před tebou červeně blikají nejrůznější přepínače a kontrolky. Alarm poškození levého křídla se rozhoukal vysokým tónem.", "pomocna zprava."));
+    game.roomMap.set('velin',new Room("velín", "Nacháziš se ve velíně raketoplánu. Na palubní desce před tebou červeně blikají nejrůznější přepínače a kontrolky. Alarm poškození levého křídla se rozhoukal vysokým tónem.", "pomocna zprava."));
     game.roomMap.set('nakladovy prostor',new Room('nakladovy prostor', "Kolem vidíš sklad nejrůznějšího nářadí. Bohudík je upevněné a nepoletuje si tu jen tak. Po bližším průzkumu se ti uleví. Technici NASA počítali skoro se vším. Na pravé straně se nachází magnetická stěna, na které jsou připevněny veškeré nástroje, které by se mohly hodit - aku vrtačka, plazmová svářečka, dokonce i náhradní keramické destičky."));
     game.roomMap.set('prechodova komora',new Room('prechodova komora', "Místnost tvaru koule o poloměru asi 1,5 metru. Kolem sebe vidíš tlačítka na otevření dveří vedoucí do velína a do volného vesmíru."));
     game.roomMap.set('volny vesmir',new Room('volný vesmír', "Naskytne se ti nádherný výhled na planetu Zemi. Jsou také vidět hvězdy, neboť je zrovna noc. Nejspíš zrovna přelétme nad Tichým oceánem, protože nejsou na Zemi vidět skoro žádná světla."));
@@ -471,15 +475,18 @@ function init(){
     //velin
     game.roomMap.get('velin').objMap.set("vysilacka", new Objects("vysilacka", "Dlouhovnná vysílačka, která slouží ke komunikaci s odletovým střediskem."));
     game.roomMap.get('velin').objMap.set("nabijecka", new Objects("vysilacka", "Nabíječka na vysílačku s univerzálním NASA konektorem."));
-    game.roomMap.get('velin').objMap.set("ovládací panel", new Objects("ovládací panel", "Při bližším pohledu na hlavní kontrolní panel na něm vidíš tlačítka.", true));
+    game.roomMap.get('velin').objMap.set("ovládací panel", new Objects("ovladaci panel", "Při bližším pohledu na hlavní kontrolní panel na něm vidíš tlačítka.", true));
     game.roomMap.get('velin').nbrs = ["nakladovy prostor", "prechodova komora"];
 
     //nakladovy prostor
-    game.roomMap.get('nakladovy prostor').objMap.set("aku vrtacka", new Objects("aku vrtacka", "Vratčka, kterou jde použít jako elektrický šroubovák. Je poháněná elektřinou z baterie.")); //neni nabita
-    game.roomMap.get('nakladovy prostor').objMap.set("pilnik", new Objects("pilnik", "Jemný pilník na železo."));
-    game.roomMap.get('nakladovy prostor').objMap.set("sverak", new Objects("sverak", "Jednoduchý svěrák na železo, do kterého jde něco upnout."));
-    game.roomMap.get('nakladovy prostor').objMap.set("keramicke desticky", new Objects("keramicke desticky", "Destičky slouží jako vnější ochrana raketoplánu proti vysoké teplotě při přistání."));
-    game.roomMap.get('nakladovy prostor').nbrs = ["velin"];
+    var np = game.roomMap.get('nakladovy prostor');
+    np.objMap.set("aku vrtacka", new Objects("aku vrtacka", "Vratčka, kterou jde použít jako elektrický šroubovák. Je poháněná elektřinou z baterie.")); //neni nabita
+    np.objMap.set("pilnik", new Objects("pilnik", "Jemný pilník na železo."));
+    np.objMap.set("sverak", new Objects("sverak", "Jednoduchý svěrák na železo, do kterého jde něco upnout."));
+    np.objMap.set("keramicke desticky", new Objects("keramicke desticky", "Destičky slouží jako vnější ochrana raketoplánu proti vysoké teplotě při přistání."));
+    np.nbrs = ["velin"];
+    np.objMap.get("pilnik").mapFn.set("upiluj", piluj);
+
     //game.roomMap.get('nakladovy prostor').objMap.set("skafandr", new Objects("skafandr", "Vesmírný skafandr, sloužící k volného prostoru."));
     
     //prechodova komora
@@ -487,8 +494,8 @@ function init(){
     game.roomMap.get('prechodova komora').nbrs = ["velin", "volny vesmir"];
 
     //volny vesmir 
-    game.roomMap.get('volny vesmir').objMap.set("raketoplan", new Objects("raketoplán", "Raketoplán v celé své kráse. Jenom křídlo nevypadá dobře.", true));
-    game.roomMap.get('volny vesmir').objMap.set("poskozene kridlo", new Objects("poškozené křídlo", "V pravém křídle zeje velká díra - to nevypadá dobře. Takhle by při přistání raketoplán shořel v atmosféře.",true)); //posledni parametr je immutable
+    game.roomMap.get('volny vesmir').objMap.set("raketoplan", new Objects("raketoplan", "Raketoplán v celé své kráse. Jenom křídlo nevypadá dobře.", true));
+    game.roomMap.get('volny vesmir').objMap.set("poskozene kridlo", new Objects("poskozené kridlo", "V pravém křídle zeje velká díra - to nevypadá dobře. Takhle by při přistání raketoplán shořel v atmosféře.",true)); //posledni parametr je immutable
     game.roomMap.get('volny vesmir').nbrs = ["prechodova komora"];
     
 
@@ -506,6 +513,21 @@ function init(){
 
     
     }); //implementace funkce command */
+}
+
+//TODO rozhledni se se plete s presun se
+//
+//
+function piluj(sep, _this, par){
+    var pole = ["sroubky"];  //co vsechno se da pilovat
+    if(par != game.bag) {println("Jejda, pilník nemáš v ruce. To asi nepůjde"); return true; } //akce uz probehla
+    var obj = parser.handleCommand(sep, pole);
+    if(obj.command == "") { println("Musíš zadat, co chceš upilovat"); return true; }
+    //zmen nekde stav sroubku na true
+    println("Piluješ a piluješ");
+    println("Dopilovaj jsi", 4000); 
+    heldUp(4000); 
+    return true;
 }
 
 function keyPressed(e){
