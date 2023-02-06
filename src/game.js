@@ -141,8 +141,6 @@ class Objects{
         println(_this.description);
     }
 
-    moveTo(
-
     //command from a to
     pickUp(where, _this){
         if(_this.immutable == true){
@@ -294,7 +292,8 @@ class Game{
     constructor(){
        // this.parser = new Parser();
         this.bag = new Room("inventar", "Inventar reprezentuje věci, které máš u sebe.");
-        this.room = "kokpit";
+        //this.room = "kokpit";
+        this.room = "prechodova komora";
         this.action = false; //nechceme prijimat dva prikazy najednou
         this.phase = -1;
        
@@ -320,6 +319,8 @@ class Game{
         this.fnMap.set("uchop", this.pickUp);
         
         this.manual = "Není k dispozici žádný manuál."; 
+        this.history = [];
+        this.i = -1; //ukazatel v historii
     }
 
     //prikazy budou ve forme - sloveso, slova mezi, (mistnost, predmet, vec);
@@ -551,11 +552,11 @@ function init(){
     game.bag.objMessage = "Věci, které si neseš s sebou - ";
     
     //mistnosti 
-game.roomMap.set('kokpit',new Room("kokpit", "Nacháziš se v kokpitu rakety. Není tu příliš prostoru. Všude kolem je jedna velká palubní deska. Ještě štěstí, že přesně víš, co který knoflík i kontrolka dělá - hodiny nudné teorie ti teď přijdou vhod. Za tebou se nachází průlez do nákladového prostoru.", "Vedle své sedačky vidíš "));
+    game.roomMap.set('kokpit',new Room("kokpit", "Nacháziš se v kokpitu rakety. Není tu příliš prostoru. Všude kolem je jedna velká palubní deska. Ještě štěstí, že přesně víš, co který knoflík i kontrolka dělá - hodiny nudné teorie ti teď přijdou vhod. Za tebou se nachází průlez do nákladového prostoru.", "Vedle své sedačky vidíš "));
 
     game.roomMap.set('nakladovy prostor',new Room('nakladovy prostor', "Nákladový prostor je určen ke skladování zásob na let a drobného nářadí, kdyby se něco pokazilo.", "Na magnetické stěně jsou silnými magnety připevněny nástroje - " ));
     game.roomMap.set('prechodova komora',new Room('prechodova komora', "Místnost tvaru koule o poloměru asi 1,5 metru. Kolem sebe vidíš tlačítka na otevření dveří vedoucí do velína a do volného vesmíru."));
-    game.roomMap.set('vesmir',new Room('vesmír', "Naskytne se ti nádherný výhled na planetu Zemi. Kéž už bys tam byl. Pod tebou je však černočerná tma - asi Tichý oceán", "Ve vesmíru, jak známo, je výslednice sil působící na tělesa často nulová. Proto stačí malý impulz a odletí do nenávratna. Není radno mít věci nepřivázané."));
+    game.roomMap.set('vesmir',new Room('vesmir', "Naskytne se ti nádherný výhled na planetu Zemi. Kéž už bys tam byl. Pod tebou je však černočerná tma - asi Tichý oceán", "Ve vesmíru, jak známo, je výslednice sil působící na tělesa často nulová. Proto stačí malý impulz a odletí do nenávratna. Není radno mít věci nepřivázané."));
 
     //velin
     var gm = game.roomMap.get('kokpit');
@@ -589,9 +590,9 @@ game.roomMap.set('kokpit',new Room("kokpit", "Nacháziš se v kokpitu rakety. Ne
     pk.objMap.set("skafandr", new Objects("skafandr", "Vesmírný skafandr, sloužící k pohybu ve volném prostoru."));
     pk.objMap.set("prulez vesmir", vv.objMap.get("prulez"));
     pk.objMap.set("prulez kokpit", gm.objMap.get("prulez"));
-    pk.objMap.set("tlacitko", new Objects("tlacitko", "Tlačítko na přidání nebo odčerpání vzduchu z přechodové komory.", "", true);
+    pk.objMap.set("tlacitko", new Objects("tlacitko", "Tlačítko na přidání nebo odčerpání vzduchu z přechodové komory.", "", true));
     pk.objMap.get("skafandr").on = false; //je skafandr nasazen
-    pk.vacuum = true; 
+    pk.vacuum = false; 
     
     pk.nbrs = ["velin", "vesmir"];
     pk.fnMap.set("moveTo", moveToPK);
@@ -601,15 +602,17 @@ game.roomMap.set('kokpit',new Room("kokpit", "Nacháziš se v kokpitu rakety. Ne
     game.bag.fnMap.set("move", bagMove); 
     vv.objMap.get("prulez").mapFn.set("zavri", zavri);
     gm.objMap.get("prulez").mapFn.set("zavri", zavri);
-    pk.objMap.get("").mapFn.set("zmackni", );
+    pk.objMap.get("tlacitko").mapFn.set("zmackni", zmackni);
 
     vv.objMap.get("prulez").mapFn.set("otevri", otevri);
     gm.objMap.get("prulez").mapFn.set("otevri", otevri);
     np.objMap.get("pilnik").mapFn.set("upiluj", piluj);
     gm.objMap.get("manual").mapFn.set("cti", cti);
-    gm.objMap.get("ovladaci panel").mapFn.set("zmackni", zmackni);
+    //gm.objMap.get("ovladaci panel").mapFn.set("zmackni", zmackni);
 
     pk.objMap.get("skafandr").mapFn.set("oblec", oblec);
+    pk.objMap.get("skafandr").mapFn.set("oblekni", oblec);
+    pk.objMap.get("skafandr").mapFn.set("nasad", oblec);
     pk.objMap.get("skafandr").mapFn.set("svlec", sundej);
     pk.objMap.get("skafandr").mapFn.set("sundej", sundej);
 }
@@ -626,13 +629,14 @@ function bagMove(_this, from, to){
 }
 
 //pokud držíme skafandr, nemůžeme se přesunout do kokpitu
-function skafandrMoveTo(_this, from, to){ if(to.name == "kokpit") { println("Jejda, se skafandrem se nevejdeš do průlezu."); return false;  }
+function skafandrMoveTo(_this, from, to){ if(to.name == "kokpit") { println("Jejda, se skafandrem se nevejdeš do průlezu."); return false;  } return true; }
 
 //oblec si skafandr
 function oblec(sep, _this, parametr){
-    if(game.bag.objMap.size != 0) println("Aby sis nasadil skafandr, musíš nejprve odložit všechny věci. Takhle bys je měl pod skafandrem a nemohl bys je používat."); return false;
-    if(game.room != "prechodova komora") { println("Tato situace by neměla nastat."); return false;}
-    if(game.bag.objMap.has("skafandr") != true) {println("Aby sis mohl nasadit skafandr, musíš ho vzít do ruky"); return false;}
+
+    if(game.bag.objMap.has("skafandr") == false) {println("Aby sis mohl nasadit skafandr, musíš ho vzít do ruky"); return true;}
+    if(game.bag.objMap.size != 1) { println("Aby sis nasadil skafandr, musíš nejprve odložit všechny ostatní věci. Takhle bys je měl pod skafandrem a nemohl bys je používat."); return true;  }
+    if(game.room != "prechodova komora") { println("Tato situace by neměla nastat."); return true;}
 
     println("Nasazuješ si skafandr. Popis postup oblékání skafandru");
     _this.on = true;
@@ -652,20 +656,44 @@ function sundej(sep, _this, parametr){
     _this.on = false;
     
     println("Sundal sis skafandr");
-    if(game.bag.objMap.size != 0) 
+    if(game.bag.objMap.size != 0){
+        //prekopiruj veci do pk
+        for(var [k,v] of game.bag.objMap){
+            game.roomMap.get("prechodova komora").objMap.set(k, v);
+        }
+        game.bag.objMap.clear(); 
         println("Všechny věci, které jsi měl s sebou si tu jen tak lítají.");
+    }
     
     return true;
 }
+
+//TODO nastavit u akcí delay
+//TODO sjednotit navratove kody - zacit pouzivat vic nez 2
+//TODO pri popisu prulezu vypisovat jejich stav
+//TODO udelat historii prikazu
+
 //zmen stav v prechodove komore
 function zmackni(sep, _this, parametr){
-    
-    
+    //nasazeny skafandr, oba prulezy zavreny, skafandr by mel byt v bagu
+
+    if(parametr.objMap.get("prulez kokpit").opened == true) { println("Musíš nejprve zavřít průchod do kokpitu."); return true; }
+    if(parametr.objMap.get("prulez vesmir").opened == true) { println("Musíš nejprve zavřít průchod do vesmíru."); return true; }
+
+    if(game.bag.objMap.has("skafandr") == false || game.bag.objMap.get("skafandr").on == false) {   println("Musíš si nasadit skafandr"); return true; }
+
     if(parametr.vacuum == true){
-        println("
-    }  
+        println("Započal proces přidávání vzduchu.");
+        parametr.vacuum = false;
+    }else {
+        println("Vysávání vzduchu započalo."); 
+        parametr.vacuum = true;
+    }
+    return true;
 }
 
+
+/*
 //parametr - odkud se prikaz vola 
 function zmackni(sep, _this, parametr){
     var pole = ["tlacitko"]; 
@@ -678,7 +706,7 @@ function zmackni(sep, _this, parametr){
         game.roomMap.get("prechodova komora").door.get(obj.command) = true; //otevreny 
         println("Průlez do " + obj.command + " se pomalu otevřel.");
     } 
-}
+} */
 
 
 function moveFromPK(sep, where, _this){ 
@@ -844,27 +872,28 @@ function piluj(sep, _this, par){
     return true;
 }
 
-var history = [""]; //seznam prikazu
-var i = -1; //ukazatel v historii
+//var history = new Array(); //seznam prikazu
 
 function keyPressed(e){
+    var input = document.getElementById('input');
     if(e.keyCode == 13){
-        var input = document.getElementById('input');
         game.inputCommand(input.value);
-        //history.push(input.value); 
+        game.history.push(input.value); 
         input.value = "";
     }
-    /*if(e.keyCode == 38){
-        if(i < 1) return;
-        i--;
-        input.value = history[i];
-    }/
+    //arrow up
+    if(e.keyCode == 38){
+        if(game.i < 1) return;
+        game.i--;
+        input.value = game.history[game.i];
+    }
+    //arrow down
     if(e.keyCode == 40){
-        if(i > history.length) return;
-        if(i == history.length - 1){ i++; input.value = ""; }
+        if(game.i > history.length) return;
+        if(game.i == history.length - 1){ game.i++; input.value = ""; }
         else{
-            i++;
-            input.value = history[i]; 
+            game.i++;
+            input.value = game.history[game.i]; 
         }
-    }*/
+    }
 }
