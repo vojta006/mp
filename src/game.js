@@ -292,8 +292,8 @@ class Game{
     constructor(){
        // this.parser = new Parser();
         this.bag = new Room("inventar", "Inventar reprezentuje věci, které máš u sebe.");
-        //this.room = "kokpit";
-        this.room = "prechodova komora";
+        this.room = "kokpit";
+ //  this.room = "prechodova komora";
         this.action = false; //nechceme prijimat dva prikazy najednou
         this.phase = -1;
        
@@ -320,7 +320,7 @@ class Game{
         
         this.manual = "Není k dispozici žádný manuál."; 
         this.history = [];
-        this.i = -1; //ukazatel v historii
+        this.i = 0; //ukazatel v historii
     }
 
     //prikazy budou ve forme - sloveso, slova mezi, (mistnost, predmet, vec);
@@ -671,7 +671,6 @@ function sundej(sep, _this, parametr){
 //TODO nastavit u akcí delay
 //TODO sjednotit navratove kody - zacit pouzivat vic nez 2
 //TODO pri popisu prulezu vypisovat jejich stav
-//TODO udelat historii prikazu
 
 //zmen stav v prechodove komore
 function zmackni(sep, _this, parametr){
@@ -710,6 +709,8 @@ function zmackni(sep, _this, parametr){
 
 
 function moveFromPK(sep, where, _this){ 
+    //nejprve zavolame std move
+    if(_this.moveFrom(sep, where, _this) == 1) return 1; //nemuzeme se presunout
     if(_this.objMap.get("prulez " + where).opened == true){
         return 0;
     }
@@ -799,10 +800,14 @@ function otevri(sep, _this, parametr){
     }
     //vzdy mohou byt otevreny pouze jedny dvere
     if(parametr.name == "prechodova komora"){
+        if(res.command ==  "prechodova komora" ) { println("Takový průlez tu není"); return true; }
         var to = res.command; 
         var closed = "";
         if(to == "kokpit") closed = "vesmir";
         else closed = "kokpit";
+        if(parametr.vacuum == true && to == "kokpit"){ println("V přechodové komoře je vakuum, které se nesmí dostat do kokpitu. Musíš nejdřív přidat vzduch."); return true; }
+        if(parametr.vacuum == false && to == "vesmir"){ println("V přechodové komoře je vzduch, kdybys teď otevřel průlez do vesmíru, došlo by k dekompresi."); return true; }
+
         var doorTo = parametr.objMap.get("prulez " + to); 
         var doorClosed = parametr.objMap.get("prulez " + closed);
         if(doorTo.opened == true){
@@ -876,21 +881,23 @@ function piluj(sep, _this, par){
 
 function keyPressed(e){
     var input = document.getElementById('input');
+    input.focus();
     if(e.keyCode == 13){
         game.inputCommand(input.value);
         game.history.push(input.value); 
+        game.i = game.history.length;
         input.value = "";
     }
     //arrow up
     if(e.keyCode == 38){
-        if(game.i < 1) return;
+        if(game.i == 0) return;
         game.i--;
         input.value = game.history[game.i];
     }
     //arrow down
     if(e.keyCode == 40){
-        if(game.i > history.length) return;
-        if(game.i == history.length - 1){ game.i++; input.value = ""; }
+        if(game.i >= game.history.length) return;
+        if(game.i == game.history.length - 1){ game.i++; input.value = ""; }
         else{
             game.i++;
             input.value = game.history[game.i]; 
