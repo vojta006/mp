@@ -6,14 +6,13 @@ document.addEventListener("keydown", (event) => { keyPressed(event); });
 
 //vypise text do div hra
 function println(text, delay = 0){
-    delay = 0; 
+//    delay = 0; 
     if(delay != 0){
         setTimeout(()=> { println(text)}, delay * 1000); 
     }
     else{
         var obj = document.getElementById('game');
         for(var i = 0; i < text.length; i++){
-            //sleep(0);
             if(text[i] == '<'){ obj.innerHTML += '<br>'; i += 3; }
             else obj.innerHTML += text[i];
 
@@ -29,6 +28,7 @@ function delContent(){
 
 //za time milisekund nastavi game.action na true
 function heldUp(time){ setTimeout(() => { game.action = false; }, 1000*time); }
+//function heldUp(time){ setTimeout(() => { game.action = false; }, 1); }
 
 class Parser{
 
@@ -83,7 +83,7 @@ class Parser{
 
             if(j == pl || i == il) break;
         }
-        i = 0, l = 0, j = 0; 
+        i = 0, j = 0; 
 
         while(true){
             if(pattern[j] == image[i]){ i++, j++, l++; }
@@ -329,7 +329,7 @@ class Game{
         this.room = "kokpit";
         //this.room = "prechodova komora";
         this.action = false; //nechceme prijimat dva prikazy najednou
-        this.phase = -1;
+        this.phase = 0;
 
         this.roomMap = new Map();
         this.fnMap = new Map();
@@ -367,7 +367,6 @@ class Game{
         if(command == "") return;
         if(this.action == true) { println("Nemůžeš vykonávat dvě akce najednou. "); return; }
 
-
         //uprav prikaz
         command = parser.removePunctuation(command);
         command = command.replace(/\s\s+/g, ' '); //odstrani mezery, nahradi za jednu
@@ -392,6 +391,7 @@ class Game{
             }
         }
         else{ //zavolej funkci se zmensenym listem parametru 
+		println(retObj.command + ":");
             this.fnMap.get(retObj.command)(sep, this);
         }
     }
@@ -562,7 +562,7 @@ class Game{
 
     intro(){
         delContent(); //smaz predchozi obsah
-        println("Hluk z raketomotorů přehlušil nervydrásající ticho. Zmocnila se tě nervozita, přestože máš za sebou tvrdý několikaletý výcvik. Za pár chvil konečně odstartuješ ke své první vesmírné misi na palubě raktery Shumaker-Levi 9.");
+        println("Hluk z raketomotorů přehlušil nervydrásající ticho. Zmocnila se tě nervozita, přestože máš za sebou tvrdý několikaletý výcvik. Za pár chvil konečně odstartuješ ke své první vesmírné misi na palubě raktery Shumaker-Levi 9.", 1);
         println("Teď teprve si začínáš uvědomovat plnou důležitost této mise - je nutné dostat se do vesmíru jako první a předčít nepřátelskou supervelmoc. <br> Už jen pár sekund do startu", 5);
         println("Odpočítávání je připraveno", 10);
         for(let i = 10; i > 0; i--){
@@ -573,13 +573,13 @@ class Game{
         println("Najednou se ozve tlumená rána. To není dobré - co to jen mohlo být?", 26); 
         println("Z řidicího střediska ti hlásí, že nejspíš došlo k poškození vnějšího pláště rakety. Ajaj, to není dobré.", 29);
         println("Další zpráva ze střediska - za chvíli s tebou nejspíš ztratí spojení - poškození pláště je většiho rozsahu, než se původně zdálo a zasáhlo i komunikační zařízení.", 32);
-        println("Středisko: <br> Jakmile se raketa vzdálí na více než 300 km, spojení pravděpodobně vypadne. Pokus se opravit poškození a opra..........");
-        println("Je to tu. Z vysílačky už se ozvývá jen neurčité šumění. Co teď? Tvou jedinou pomocí asi bude jen palubní manuál a nabyté znalosti z výcviku.", 35);
-        println("Nyní už je to jen na tobě, aby sis zachránil holý život.", 35);
-        println("Raketa mezitím už vystoupala na oběžnou dráhu a nyní krouží kolem země");
-        //game.action = true;
-        //heldUp(32); //za 32 sekund bude možné vykonávat příkazy
-        game.phase = 1; 
+        println("Středisko: <br> Jakmile se raketa vzdálí na více než 300 km, spojení pravděpodobně vypadne. Pokus se opravit poškození a opra..........", 35);
+        println("Je to tu. Z vysílačky už se ozvývá jen neurčité šumění. Co teď? Tvou jedinou pomocí asi bude jen palubní manuál a nabyté znalosti z výcviku.", 40);
+        println("Nyní už je to jen na tobě, aby sis zachránil holý život.", 45);
+        println("Raketa mezitím už vystoupala na oběžnou dráhu a nyní krouží kolem země", 50);
+        game.action = true;
+        heldUp(50); //za 32 sekund bude možné vykonávat příkazy
+        //game.phase = 1; 
         init(); //nadeklaruj vse 
     }
 }
@@ -589,7 +589,7 @@ var parser = new Parser();
 
 //deklarace hry
 //window.addEventListener("load", game.begining);
-window.addEventListener("load", game.intro);
+window.addEventListener("load", game.begining);
 
 function init(){
     //zprava
