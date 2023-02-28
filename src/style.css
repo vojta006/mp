@@ -1,29 +1,26 @@
+@import url('https://fonts.googleapis.com/css2?family=Shantell+Sans:ital,wght@1,400;1,800&display=swap');
 
-/*
-*, *::before, *::after{
-    box-sizing: border-box;
-    font-family: 'Times New Roman', Times, serif;
-    color: greenyellow;
-}*/
+
 
 *{
     color: green;
-    font-weight: bold;
+    font-weight: 400;
     font-family: 'Times New Roman';
+    font-family: 'Shantell Sans', cursive;
     /*border-style: solid;*/
+}
+
+b {
+    font-weight: 800; 
+    font-family: 'Shantell Sans', cursive;
 }
 
 body{
     margin: 0;
     background-color: #333;
-    
+
 }
 
-/*.input_form{ 
-    border-style: hidden;
-    border: #fff;
-    border-width: 10px;
-}*/
 
 .console{
     margin: 10%;
@@ -53,17 +50,3 @@ form input:focus{
     padding: 0%;
 }
 
-
-
-/*form input[type=text]{
-    width: 300px;
-    margin-bottom: 20px;
-    font-size: 20px;
-    border: 0;
-    padding: 5px 7px;
-    }
-  
-form input[type=text]:focus {
-    color: yellow;
-}
-*/
