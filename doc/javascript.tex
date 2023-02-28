@@ -8,21 +8,23 @@ Javascript je programovací jazyk, který je společně s HTML a CSS jednou z hl
 
 \subsection{Vlastnosti}
 Na anglické wikipedii jsou vyjmenovány následující vlastnosti:
-\begin{quote} \textit{" JavaScript is a high-level, often just-in-time compiled language that conforms to the ECMAScript standard. It has dynamic typing, prototype-based object-orientation, and first-class functions. It is multi-paradigm, supporting event-driven, functional, and imperative programming styles. It has application programming interfaces (APIs) for working with text, dates, regular expressions, standard data structures, and the Document Object Model (DOM)." } \end{quote}
+\begin{quote} \textit{" JavaScript is a high-level, often just-in-time compiled language that conforms to the ECMAScript standard. It has dynamic typing, prototype-based object-orientation, and first-class functions. It is multi-paradigm, supporting event-driven, functional, and imperative programming styles. It has application programming interfaces (APIs) for working with text, dates, regular expressions, standard data structures, and the Document Object Model (DOM)." \cite{web:wik:en:js}} \end{quote} 
 
 Nyní budou některé vlastnosti vysvětleny. Objektově orientovanému programování je věnována samostatná kapitola \nameref{oop}.
 \begin{itemize}
-    \item Hight-level - (vysokoúrovňový programovací jazyk). Tyto jazyky disponují silnou abstrakcí v tom, jak je zacházeno s hardwarem počítače. Opakem jsou nízkoúrovňové jazyky, které jsou naopak s hardwarem provázány velmi úzce a je například možné přistupovat k jednotlivým adresám v paměti počítače.
-    \item just-in-time compiled (JIT) - (zřejmě neexistuje český překlad) je způsob, kdy nejsou zdrojové kódy překládány do strojového kódu před spuštěním programu, nýbrž až za běhu programu, často z takzvaného bytekódu, již kompilovaného zdrojového kódu. Obvykle dosahuje většího výkonu než interpretované jazyky a zároveň kombinuje jejich výhody (např. optimalizace možné až za běhu programu).
-    \item dynamic typing - (dynamicky typovaný). Vlastnost programovacích jazyků, kdy je typ proměnné vázán na hodnotu. Není tedy potřeba při deklaraci proměnné definovat její typ - ten je určen podle proměnné.
-    \item first-class functions - 
+    \item Hight-level (vysokoúrovňový programovací jazyk) - tyto jazyky disponují silnou abstrakcí v tom, jak je zacházeno s hardwarem počítače. Opakem jsou nízkoúrovňové jazyky, které jsou naopak s hardwarem provázány velmi úzce a je například možné přistupovat k jednotlivým adresám v paměti počítače.
+    \item just-in-time compiled (JIT) - způsob vykonávání zdrojového kódu, kdy nejsou zdrojové kódy překládány do strojového kódu před spuštěním programu, nýbrž až za běhu programu, často z takzvaného bytekodu, již kompilovaného zdrojového kódu. Obvykle dosahuje většího výkonu než interpretované jazyky a zároveň kombinuje jejich výhody (např. optimalizace možné až za běhu programu).
+    \item dynamic typing (dynamicky typovaný) - vlastnost programovacích jazyků, kdy je typ proměnné vázán na hodnotu. Není tedy potřeba při deklaraci proměnné definovat její typ - ten je určen podle proměnné.
+    \item first-class functions - programovací jazyky s touto schopností nerozlišují mezi funkcemi a běžnými proměnnými. Je v nich tedy možné například jako parametr funkce určit jinou funkci.
 
-    \item musti-paradigm
+    \item event-driven (událostmi řízený) - programovací paradigma, kdy jsou funkce spouštěny na základě nějakého podnětu, události. Příkladem může být zmáčknutí tlačítka od uživatele. 
+    \item functional (funkcionální) - programovací styl vycházející z lambda kalkulu. Hlavní myšlenkou je vyhodnocování vstupního výrazu pomocí jeho zjednodušování až na elementární výrazy. Zjednodušování typicky probíhá formou rekurze. 
+    \item imperative (imperativní programování) - podporuje řešení problému krok za krokem. Typickými prvky imperativního programování je přiřazení do proměnné, cykly, podmíněné skoky.  
 
-    \item event-driven (událostmi řízený) - 
-    \item functional (funkcionální) - 
-    \item imperative - (imperativní programování) 
-    \item API - 
+    \item multi-paradigm (multiparadigmatický) - jazyk umožňující zapojení více programovacích technik. V případě javascriptu jsou tyto techniky například imperativní programování, funkcionální programování, řízení událostmi, atd. 
+
+    \item API (application programming interface) - knihovna funkcí, které abstrahují jednodušší příkazy do složitějších celků, které jsou však jednodušší pro konkrétní použití. 
+	\cite{web:wik:cz:js, web:wik:en:js} 
 \end{itemize}
 
 \subsection{Historie}
@@ -32,9 +34,9 @@ V roce 1995 vznikl také prohlížeč Internet Explorer, jenž byl vyvinut spole
 
 Tato dualita ve skriptovacích jazycích pokračovala až do roku 2004. Během té doby rostla popularita Exploreru až tak, že v roce 2000 zaujímal 95\% podíl na trhu, což v podstatě učinilo JScript standardním jazykem webového programování. V roce 2004 vyšel pod organizací Mozilla, následovníkem Nescapu, open-source prohlížeč Firefox. 
 Opětovnému nárůstu popularity JavaScriptu pomohl Jessie James Garret, když publikoval článek o nových webových technologiích založených na JavaScriptu a hlavně jejich souhrnnou filozofii - Ajax (Asynchronous JavaScript and XML). Ten popisoval asynchronní řízení událostí, například načítání dat na pozadí, což se pozitivně projevilo například v rychlosti načítání stránek. Na tento rozvoj navázalo mnoho open-source knihoven zjednodušujících psaní webových aplikací jako Prototype(2005) nebo JQuery(2006).
-Rozšířit JavaScript mimo prohlížeč se povedlo také díky Ryanu Dahlovi, který napsal prostředí Node.js (2009), které umožňuje spouštět JavaScript, například na straně serveru.
+Rozšířit JavaScript mimo prohlížeč se povedlo také díky Ryanu Dahlovi, který napsal prostředí Node.js (2009), které umožňuje spouštět JavaScript, například na straně serveru. \cite{web:wik:cz:js, web:wik:en:js} 
 
-V současnosti je JavaScript jediným skriptovacím jazykem na straně uživatele, který je webovými prohlížeči podporován, což z něj dělá jeden z nejrozšířenějších programovacích jazyků.
+V současnosti je JavaScript jediným skriptovacím jazykem na straně uživatele, který je webovými prohlížeči podporován, což z něj dělá jeden z nejrozšířenějších programovacích jazyků. \cite{web:wik:cz:js} 
 
 %https://www.quora.com/Why-does-Javascript-seem-so-weird
 

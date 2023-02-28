@@ -8,8 +8,12 @@ Objektově orientované programování (OOP) je programovací paradigma (styl, t
 \begin{itemize}
     \item Třída - šablona, podle které se následně vytváří objekt. Všechny objekty dané třídy ponesou stejné proměnné (stejný datový typ, pokud je rozlišován, a názvy proměnných), ale mohou v nich mít uložené jiné hodnoty. 
 	\item Objekt - proměnná, která obsahuje další proměnné, tak jak byly nadeklarovány ve třídě. Prakticky pomáhá k abstrakci jednoduchých datových typů do větších, člověku přístupnějších, datových celků.
-		%\img{} %tady vložit obrázek třídy Auto s pár atributy
-		Nejprve je vytvořena třída auto, která obsahuje proměnné znacka, rok\_vyroby, model. Poté je vytvořen samotný objekt \textit{Audi}, který v sobě uchovává všechny proměnné, k nimž lze přistupovat. (implementace v javascriptu)
+		\begin{figure}[h]
+			\centering
+			\includegraphics[width=.6\textwidth]{./images/oop/class_audi.png}
+			\caption{Rozdíly mezi objektem a třídou}
+		\end{figure}
+		Nejprve je vytvořena třída Auto, která obsahuje proměnné znacka, rok\_vyroby, model. Poté je vytvořen samotný objekt \textit{Audi}, který v sobě uchovává všechny proměnné, k nimž lze přistupovat. (implementace v javascriptu)
     \item Zapouzdření - k datům objektu je typicky zakázáno přistupovat jinak, než přes jeho rozhranní - funkce ( v kontextu objektů nazývané metody). Tyto metody se obvykle nazývají get a set.
 	\item Dědičnost - pro možnost větší abstrakce slouží dědičnost. Objekt může být potomkem jiného objektu. Tehdy přebírá jeho vlastnosti - data a metody. Tyto vlastnoti jsou dále součástí objektu a lze k nim přistupovat běžným způsobem.
 		%\img{} %obrazek s dedenim tridy
@@ -17,5 +21,6 @@ Objektově orientované programování (OOP) je programovací paradigma (styl, t
 		%\img{}
 		Dalším druhem polymorfismu (parametrický) je volání funkce pro různé datové typy. Příklad z jazyka c++, ve kterém to umožňuje použití šablon.
 		%\img{}
+	\cite{web:wik:en:oop}
 \end{itemize}
 \end{document}

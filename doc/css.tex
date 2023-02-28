@@ -14,8 +14,8 @@ Pravidla jsou na HTML elementy uplatňována podle selektorů, a základní mů�
 	\item Selektor pro elementy jednoho typu. Například pro nadpis třetí úrovně  $<h3>$.
 		\begin{figure}[h]
 			\centering
-			\includegraphics[width=.3\textwidth]{./css/h3.png}
-			\caption{Znazornění třídy}
+			\includegraphics[width=.5\textwidth]{./css/h3.png}
+			\caption{Selektor tagu h3}
 		\end{figure}
 		Zahrneme-li toto pravidlo do HTML, všechny nadpisy 3. úrovně budou modrou barvou, velikosti 10 pixelů a podtržené.
 	\item Elementy s konkrétním atributem - názvem třídy nebo id.
@@ -27,10 +27,10 @@ Pravidla jsou na HTML elementy uplatňována podle selektorů, a základní mů�
 
 		\begin{figure}[h]
 			\centering
-			\includegraphics[width=.3\textwidth]{./css/classid.png}
-			\caption{Znazornění třídy}
+			\includegraphics[width=.5\textwidth]{./css/classid.png}
+			\caption{Selektor třídy a id}
 		\end{figure}
-		Pravidla mohou mít více selektorů oddělených čárkou. Pro všechny elementy s atributem \textit{class = "jmenotridy"} a unikátní element s atributem \textit{id ="nazevid"}, bude text psán kurzivou o velikost 1 cm.
+		Pravidla mohou mít více selektorů oddělených čárkou. Pro všechny elementy s atributem \textit{class = "jmenotridy"} a unikátní element s atributem \textit{id ="nazev\_id"}, bude text psán kurzivou o velikost 1 cm.
 	\item Elementy v závislosti na jejich umístění v hierarchii dokumentu. Například pravidla se selektorem \textit{body>div} budou aplikována pouze na elementy \textit{div}, které jsou přímým potomkem elementu \textit{body}. Neplatil by tedy pro \textit{div} uzavřený v elementu \textit{p}, uzavřeném v elementu \textit{body}.
 \end{itemize}
 Výše vyjmenované sektory však nejsou kompletní. Existuje množství dalších selektorů. \cite{web:cz:selektory}
@@ -42,7 +42,7 @@ Tento zápis je připsán ke konkrétnímu elementu vedle zápisu jeho atributů
 		\begin{figure}[h]
 			\centering
 			\includegraphics[width=.6\textwidth]{./css/inline.png}
-			\caption{popisek}
+			\caption{Inline zápis css stylů}
 		\end{figure}
 Tento zápis se nedoporučuje používat, jelikož potlačuje výhody CSS - oddělení obsahu a vizuální podoby.
 
@@ -50,15 +50,15 @@ Tento zápis se nedoporučuje používat, jelikož potlačuje výhody CSS - odd�
 CSS pravidla jsou zapsána v hlavičce HTML dokumentu do tagu $<head>$. Nevýhodou je aplikace pravidel pouze na jeden konkrétní dokument.
 		\begin{figure}[h]
 			\centering
-			\includegraphics[width=.3\textwidth]{./css/header.png}
-			\caption{Znazornění třídy}
+			\includegraphics[width=.5\textwidth]{./css/header.png}
+			\caption{Zápis css v hlavičce html}
 		\end{figure}
 \subsubsection{Externí CSS soubor}
 Nečastěji používaným způsobem je deklarace pravidel v externím souboru. Ten může být s HTML dokumentem provázán tagem \textit{$<link>$}.
 		\begin{figure}[h]
 			\centering
 			\includegraphics[width=.6\textwidth]{./css/extern.png}
-			\caption{Znazornění třídy}
+			\caption{Načtení css do html z externího souboru }
 		\end{figure}
 Atribut \textit{href} udává relativní cestu k souboru, atribut \textit{type} říká prohlížeči, aby daný soubor interpretoval jako CSS. 
 Další možností je připojení externího souboru pomocí http hlavičky.

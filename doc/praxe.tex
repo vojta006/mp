@@ -15,6 +15,11 @@ Kvůli hře jednoho hráče byl raketoplán nahrazen raketou - rakeoplán je kon
 Samotnou hru zle rozdělit z hlediska funkčních celků na engine, který zajišťuje fungování hry - přijímání příkazů, vyhodnocování, reakce na nesprávné příkazy, chybové hlášky, atd., a samotný popis děje.
 V enginu jsou implementovány pouze základní příkazy, které obecně fungují na větší množství objektů nebo hráče. Tím jsou myšleny přesuny mezi místnostmi, zvedání předmětů, nápovědy k lokalitám a předmětům, a také jejich popisy. Naproti tomu příkazy vztahující se k jednomu předmětu, například \textit{čti} jsou přesměrovány na konkrétní objekty (v případě přikazu \textit{čti} je to manuál), které je pak zpracují dle potřeby. To umožňuje snadnou a přehlednou rozšiřitelnost hry pomocí krátkých funkcí.
 
+		\begin{figure}[h]
+			\centering
+			\includegraphics[width=.7\textwidth]{./praxe/longest_substring.png}
+			\caption{Funkce na najití nejdelšího společného řetězce mezi vstupy }
+		\end{figure}
 Aby byl proces přidávání nových funkcí co nejjednoduší, jsou funkce zapsány v datové struktuře Map pod klíčem s jejich názvem. 
 
 Příkaz přijatý od uživatele je nejprve upraven parserem, který najde odpovídající příkaz a poté je stromovou strukturou přesměrováván a zpracováván.
@@ -22,20 +27,20 @@ Příkaz přijatý od uživatele je nejprve upraven parserem, který najde odpov
 \subsection{Parsování vstupu}
 Pro rozpoznávání uživatelem vložených příkazů slouží parser. Je-li vstup přijat od uživatele, parser jej nejprve zbaví diakritiky, poté je textový řetězec rozdělen na jednotlivá slova po mezerách. Tento proces je vykonán pří přijetí příkazu. Dále parser zajišťuje poznávání slov - nejprve ve funkci \textit{inputCommand} je příkaz rozdělený po mezerách testován s množinou názvů funkcí (jdi, pomoc, poloz, zvedni, popis, ...). V případě, že parser nerozpozná shodu mezi vstupem od uživatele a funkcemi, jsou dále takto testovány funkce u objektů. Je-li rozpoznána shoda s nějakou funkcí, je tato funkce zavolána. Uvnitř této funkce je opět testována shoda mezi předpokládanými parametry funkce (například příkaz \textit{jdi} očekává jako parametr název místnosti) a vstupem od uživatele. Tímto stromovým systémem je zpracováván celý vstup od uživatele, k čemuž napomáhá datová struktura Map.
 
+		\begin{figure}[h]
+			\centering
+			\includegraphics[width=.7\textwidth]{./praxe/remove_diacritics.png}
+			\caption{Odstranění diakritiky ze vstupu}
+		\end{figure}
 \subsection{Příkazy}
 Nyní budou stručně popsány příkazy, které jsou implementovány již v enginu, a jejich funkčnost.
 \begin{itemize}
-    \item popiš - tento příkaz, je-li zapsán bez parametrů, vypíše popis k aktuální místnosti. Pokud je s parametrem, popíše objekt, který mu byl zadán jako parametr, pokud je v dosahu 
-    \item vezmi - příkaz vezmi přijímá parametr názvů objektů, které jsou v okolní místnosti
-    \item polož - stejně jako příkaz vezmi, přijímá za parametry objekty, které si hráč nese s sebou
-    \item jdi - validními parametry jsou názvy místností.
+    \item popiš - tento příkaz, je-li zapsán bez parametrů, vypíše popis k aktuální místnosti. Pokud je s parametrem, popíše objekt, který mu byl zadán jako parametr, pokud je v dosahu. Synonymem je také \textit{rozhlédni se, prozkoumej}
+    \item vezmi - příkaz vezmi přijímá parametr názvů objektů, které jsou v okolní místnosti. Pokud dostane jako parametr objekt, který se nenachází v okolní místnosti, vypíše chybovou hlášku. Je možné použít také slova \textit{zdvihni, zvedni, seber}.  
+    \item polož - stejně jako příkaz vezmi, přijímá za parametry objekty, které si hráč nese s sebou. Zde je synonymem příkaz \textit{odlož}. 
+    \item jdi - validními parametry jsou názvy místností. Zajišťuje přesun do sousedních místností. Dále je možno použít \textit{přesuň se}. 
 \end{itemize}
 
-\subsection{Potíže}
-Jelikož není javascript primárně určen k psaní textových her či adventur, neexistují příliš dobré nástroje, které by jejich vývoj usnadňovaly. Nelze říci, že by se během vývoje hry vyskytly vážnější problémy, spíše problémy, které byly způsobeny neoptimalitou javascriptu jako jazyka pro vývoj textových her, jako například délka kódu.
-
-\subsection{TADS 3}
-TADS 3 je programovací jazyk určený k vývoji textových her. 
 
 \end{document}
 
