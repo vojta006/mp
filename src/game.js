@@ -233,6 +233,7 @@ class Room{
 			var comm = parser.handleCommand(sep, makeListOf(obj.mapFn));
 			sep = comm.sep; 
 			if(comm.command == "") continue;
+			println("<b>" + comm.command + " :</b>"); 
 			if(obj.mapFn.get(comm.command)(sep, obj, _this) == true) {return true;} //kdyz je prvni uspesny, tak
 		} 
 		return false; 
@@ -602,7 +603,7 @@ window.addEventListener("load", game.begining);
 
 function init(){
 	//zprava
-	game.manual = "Pro pohyb mezi místnostmi použij příkaz <b>'jdi' </b>. <br> Pokud máš po ruce manuál, můžeš ho číst příkazem <b>'čti manual'</b>. <br> Aby ses rozhlédl po místnosti, zadej příkaz <b>'rozhlédni se'</b>. <br> Dále můžeš brát předměty. <br> Pro vypsání předmětů, které si neseš s sebou zadej <b>'popiš inventář'</b>."; 
+	game.manual = "Pro pohyb mezi místnostmi použij příkaz <b>'jdi' </b>. <br> Pokud máš po ruce manuál, můžeš ho číst příkazem <b>'čti manual'</b>. <br> Aby ses rozhlédl po místnosti, zadej příkaz <b>'rozhlédni se'</b>. <br> Dále můžeš brát některé předměty, které taky můžeš prozkoumat. <br> Pro vypsání předmětů, které si neseš s sebou zadej <b>'popiš inventář'</b>."; 
 	game.bag.objMessage = "Věci, které si neseš s sebou - ";
 
 	//mistnosti 
@@ -657,6 +658,7 @@ function init(){
 	vv.objMap.get("prulez vesmir").mapFn.set("zavri", zavri);
 	gm.objMap.get("prulez kokpit").mapFn.set("zavri", zavri);
 	pk.objMap.get("tlacitko").mapFn.set("zmackni", zmackni);
+	pk.objMap.get("tlacitko").mapFn.set("stiskni", zmackni);
 
 	vv.objMap.get("prulez vesmir").mapFn.set("otevri", otevri);
 	gm.objMap.get("prulez kokpit").mapFn.set("otevri", otevri);
@@ -1171,6 +1173,7 @@ function aktivuj(sep, _this, par){
 	var vv = game.roomMap.get('vesmir');
 	if(vv.objMap.has("keramicke desticky") == false || vv.objMap.get("keramicke desticky").attached == false) {  showInputIn(10*1000); println("Test přerušen. Nalezena neznámá závada v sektoru AT346. Před nastavením autopilota je nutné ji opravit.", 10); return true; }
 
+	showInputIn(15); 
 	println("Autopilot úspěsně aktivován.", 10); 
 	println("Navádění na přistání začalo.", 15); 
 
