@@ -4,7 +4,7 @@
 \section{Praktická část}
 Hra je z velké části napsána v javascriptu, jenž dynamicky upravuje obsah html stránky. Ta je dále upravena pomocí css, aby připomínala starou herní konzoli. 
 
-\subsection{Téma}
+\subsection{Námět}
 Hra se odehrává na palubě fiktivní rakety Shumaker-Levi 9, jenž je při startu neznámým způsobem poškozena, nicméně pokračuje dále v plánovaném letu. Komunikace hráče, jediného člena posádky, s řídicím střediskem je přerušena a hráč se tak ocitá v neznámým způsobem poškozené raketě a je nucen situaci vyřešit. 
 
 Původní inspirací pro hru byla zkáza raketoplánu Columbia, která se odehrála 1. února 2003 při přistání. Příčinou havárie se ukázal být kousek hmoty, který se uvolnil při startu z externí palivové nádrže a udělal díru do křídla raketoplánu. Závada se projevila až při konci mise při přistání, kdy se do poškozeného křídla dostal horký vzduch, který poškodil statiku křídla, a raketoplán se rozpadl. \cite{web:wik:cz:columbia} 
@@ -41,6 +41,22 @@ Nyní budou stručně popsány příkazy, které jsou implementovány již v eng
     \item jdi - validními parametry jsou názvy místností. Zajišťuje přesun do sousedních místností. Dále je možno použít \textit{přesuň se}. 
 \end{itemize}
 
+		\begin{figure}[h]
+			\centering
+			\includegraphics[width=.7\textwidth]{./praxe/uvod.png}
+			%\includegraphics[width=.7\textwidth]{./praxe/uvod.png}
+			\caption{Po spuštění vítá hráče úvodní obrazovka}
+		\end{figure}
+\subsection{Děj}
+Hra začíná startem rakety Shumaker-Levi 9, na jejíž palubě se hráč, jakožto vycvičený astronaut, ocitá. Při startu je však raketa neznámým způsobem poškozena a hráčovým úkolem se stává opravit raketu a vrátit se bezpečně na Zemi. Jediným pomocníkem se stává palubní manuál, v němž jsou popsány kroky, jenž musí hráč učinit, aby například prošel přechodovou komorou do volného vesmíru, kde zjistí rozsah poškození rakety. Manuál ve hře funguje jako jakýsi návod, k němuž by se měl hráč uchýlit v nouzi - neví-li jak postupovat. V manuálu jsou popsány netriviální a neintuitivní operace s předměty, které je potřeba učinit, aby hráč dosáhl pokroku. Příkladem může být samotné opravení závady, která, jak by měl hráč zjistit v průběhu hry, spočívá v poškozeném keramickém plášti rakety. Pro opravení pláště je potřeba vystoupit do vesmíru, kde je nutné přiložit na poškozené místo keramické destičky, které hráč najde v nákladovém prostoru, a následně je přišroubovat aku vrtačkou. Aku vrtačku najde hráč taktéž v nákladovém prostoru. Záludností ovšem je, že je zpočátku nenabitá, což by měl hráč zjistit až ve volném vesmíru, neboť v ostatních prostorech nelze, z důvodu bezpečnosti, aku vrtačku používat. K nabití slouží nabíječka, kterou hráč najde v kokpitu rakety. Tu je potřeba nejprve vzít do ruky, následně zapojit do nabíječky, a posléze nabít aku vrtačku. Nabíjení trvá několik minut. V této době by neměl hráč s nabíječkou nijak manipulovat (brát), neboť tím je proces nabíjení přerušen.  
+		\begin{figure}[h]
+			\centering
+			\includegraphics[width=1.0\textwidth]{./praxe/rozhledni.png}
+			\caption{Po zadání příkazu rozhlédni se je vypsán popis okolí spolu s předměty v místnost.}
+		\end{figure}
+
+
+Hra se odehrává ve čtyřech lokalitách. Nejprve se hráč nachází v kokpitu, posléze objeví nákladový prostor, přechodovou komoru a volný vesmír. Lokality mají význam oddělení. Hráč tedy může používat pouze předměty, které má u sebe nebo se nacházejí ve stejné místnosti jako hráč. 
 
 \end{document}
 

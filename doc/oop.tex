@@ -2,7 +2,7 @@
 \documentclass[main.tex]{subfiles}
 \begin{document}
 
-\section{Objektově orientované programování}
+\subsection{Objektově orientované programování}
 \label{oop}
 Objektově orientované programování (OOP) je programovací paradigma (styl, technika), založené na konceptu objektů, jež uchovávají data a kód, který by se měl vztahovat k datům objektu. Kód, jež je ve standardním smyslu funkcí, se v kontextu objektu nazývá metoda. Určitým protipólem k OOP je programování imperativní ( procedurální ). Základními pojmy OOP jsou:
 \begin{itemize}
@@ -20,6 +20,12 @@ Objektově orientované programování (OOP) je programovací paradigma (styl, t
 	\item Polymorfismus - umožňuje různým objektům, které mají společného předka, aby byla zavolána metoda přes tohoto předka. Implementace dané funkce se v potomcích typicky liší.
 		%\img{}
 		Dalším druhem polymorfismu (parametrický) je volání funkce pro různé datové typy. Příklad z jazyka c++, ve kterém to umožňuje použití šablon.
+		\begin{figure}[h]
+			\centering
+			\includegraphics[width=.8\textwidth]{./images/oop/prototype.png}
+			\caption{Příkald parametrického polymorfismu.}
+		\end{figure}
+	%	Zahrneme-li toto pravidlo do HTML, všechny nadpisy 3. úrovně budou modrou barvou, velikosti 10 pixelů a podtržené.
 		%\img{}
 	\cite{web:wik:en:oop}
 \end{itemize}

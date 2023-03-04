@@ -2,13 +2,14 @@
 \documentclass[main.tex]{subfiles}
 \begin{document}
 
-\section{CSS}
+\subsection{CSS}
+\label{css}
 CSS (zkratka z anglického Cascading Style Sheet, v češtině kaskádové styly) je jazyk, definující způsob zobrazení elementů na HTML, XHTML nebo XML stránce. Hlavní myšlenkou je oddělit obsah a strukturu dokumentu od jeho vizuální podoby, jako barvy, rozložení a fontů. Toto oddělení také umožňuje použít stejný vizuální vzhled pro více HTML stránek. Autorem myšlenky oddělit obsah od vzhledu je norský programátor Håkon Wium Lie. Nyní je publikovaný pod organizací W3C.  
 
-\subsection{Specifikace}
+\subsubsection{Specifikace}
 \begin{quote} \textit{"Definice kaskádových stylů sestává z několika pravidel. Každé pravidlo obsahuje selektor a blok deklarací. Každý blok deklarací pak obsahuje deklarace oddělené středníky ; a každá deklarace sestává z identifikátoru vlastnosti, následuje dvojtečka : a hodnota vlastnosti. Nepovinně ještě může následovat označení !important, které zvýší sílu deklarace."} \cite{web:wik:cz:css} \end{quote} 
 
-	\subsubsection{Selektory}
+\subsubsection*{Selektory}
 Pravidla jsou na HTML elementy uplatňována podle selektorů, a základní můžeme rozdělit následujícím způsobem.
 \begin{itemize}
 	\item Selektor pro elementy jednoho typu. Například pro nadpis třetí úrovně  $<h3>$.
@@ -35,9 +36,9 @@ Pravidla jsou na HTML elementy uplatňována podle selektorů, a základní mů�
 \end{itemize}
 Výše vyjmenované sektory však nejsou kompletní. Existuje množství dalších selektorů. \cite{web:cz:selektory}
 
-\subsection{Zahrnutí do HTML}
+\subsubsection*{Zahrnutí do HTML}
 Existují tři možnosti, kde zapisovat CSS pravidla, aby byla zahrnuta do HTML.
-\subsubsection{inline zápis}
+\subsubsection*{Inline zápis}
 Tento zápis je připsán ke konkrétnímu elementu vedle zápisu jeho atributů.
 		\begin{figure}[h]
 			\centering
@@ -46,14 +47,14 @@ Tento zápis je připsán ke konkrétnímu elementu vedle zápisu jeho atributů
 		\end{figure}
 Tento zápis se nedoporučuje používat, jelikož potlačuje výhody CSS - oddělení obsahu a vizuální podoby.
 
-\subsubsection{Zápis v hlavičce}
+\subsubsection*{Zápis v hlavičce}
 CSS pravidla jsou zapsána v hlavičce HTML dokumentu do tagu $<head>$. Nevýhodou je aplikace pravidel pouze na jeden konkrétní dokument.
 		\begin{figure}[h]
 			\centering
 			\includegraphics[width=.5\textwidth]{./css/header.png}
 			\caption{Zápis css v hlavičce html}
 		\end{figure}
-\subsubsection{Externí CSS soubor}
+\subsubsection*{Externí CSS soubor}
 Nečastěji používaným způsobem je deklarace pravidel v externím souboru. Ten může být s HTML dokumentem provázán tagem \textit{$<link>$}.
 		\begin{figure}[h]
 			\centering
@@ -66,7 +67,7 @@ Poslední možností, jak připojit externí soubor je tagem \textit{$<style>$} 
 
 
 
-%\subsection{Blok deklarací}
+%\subsubsection*{Blok deklarací}
 %Blok deklarací uvedený selektorem obsahuje několik uspořádaných dvojic - \textit{identifikátor vlastnosti : hodnota vlastnosti}. Identifikátory vlastností jsou typicky anglické názvy vlastností, jako color, border, font-family.
 
 %Tento blok deklarací nastavuje barvu písma na modrou identifikátorem color, atd.. dopsat. 
