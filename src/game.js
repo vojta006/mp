@@ -6,7 +6,7 @@ document.addEventListener("keydown", (event) => { keyPressed(event); });
 
 //vypise text do div hra
 function println(text, delay = 0){
-//	delay = 0; 
+	delay = 0; 
 	if(delay != 0){
 		setTimeout(()=> { println(text)}, delay * 1000); 
 	}
@@ -33,8 +33,8 @@ function hideInput(){
 }
 
 //za time milisekund nastavi game.action na true
-//function showInputIn(time){  time = 0;hideInput(); setTimeout(() => { showInput(); }, time); }
-function showInputIn(time){  ;hideInput(); setTimeout(() => { showInput(); }, time); }
+function showInputIn(time){  time = 0;hideInput(); setTimeout(() => { showInput(); }, time); }
+//function showInputIn(time){  ;hideInput(); setTimeout(() => { showInput(); }, time); }
 
 class Parser{
 
@@ -233,7 +233,7 @@ class Room{
 			var comm = parser.handleCommand(sep, makeListOf(obj.mapFn));
 			sep = comm.sep; 
 			if(comm.command == "") continue;
-			println("<b>" + comm.command + " :</b>"); 
+			println("<b>" + comm.command + ":</b>"); 
 			if(obj.mapFn.get(comm.command)(sep, obj, _this) == true) {return true;} //kdyz je prvni uspesny, tak
 		} 
 		return false; 
@@ -353,6 +353,7 @@ class Game{
 		this.fnMap.set("pomoc", this.help );
 
 		this.fnMap.set("poloz", this.drop);
+		this.fnMap.set("zahod", this.drop);
 		this.fnMap.set("odloz", this.drop);
 
 		//this.fnMap.set("poloz", this.drop);
@@ -635,7 +636,7 @@ function init(){
 	//volny vesmir 
 	vv.objMap.set("raketa", new Objects("raketa", "Raketa Shumaker Levi 9 se blyští v zapadajícím slunečním svitu.", "",  true));
 	vv.objMap.set("prulez vesmir", new Objects("prulez mezi prechodovou komorou a vesmirem", "Průlez mezi vesmírem a přechodovou komorou.", "", true));
-	vv.objMap.set("poskozene misto", new Objects("poskozene misto", "Na přídi u návratového modulu je v keramickém obložení velká díra. To se musí opravit, nebo raketa ",true)); //posledni parametr je immutable
+	vv.objMap.set("poskozene misto", new Objects("poskozene misto", "Na přídi u návratového modulu je v keramickém obložení velká díra. To se musí opravit, nebo raketa ", "" ,true)); //posledni parametr je immutable
 	vv.objMap.get("prulez vesmir").stat = false; 
 
 	vv.nbrs = ["prechodova komora"];
@@ -741,10 +742,9 @@ function oblec(sep, _this, parametr){
 
 //sundej si skafandr 
 function sundej(sep, _this, parametr){
-	if(game.room != "prechodova komora") { println("Není dobrý nápad sundavat si skafandr mimo přechodovou komoru"); return false; }
+	if(game.room != "prechodova komora") { println("Není dobrý nápad sundavat si skafandr mimo přechodovou komoru"); return true; }
 
-	//par === prechodova komora
-	if(parametr.vacuum == true){ println("To není dobrý nápad, je tu stále vakuum. Začala by ti vřít krev a konec by byl rychlý"); return false; }
+	if(game.roomMap.get("prechodova komora").vacuum == true){ println("To není dobrý nápad, je tu stále vakuum. Začala by ti vřít krev a konec by byl rychlý"); return true; }
 
 	//veci ze skafandru nechame "spadnout"
 
@@ -769,9 +769,7 @@ function sundej(sep, _this, parametr){
 //TODO nastavit u akcí delay
 //TODO sjednotit navratove kody - zacit pouzivat vic nez 2
 //TODO pri popisu prulezu vypisovat jejich stav
-//TODO pridat k objektum parametr hidden 
-//TODO pridat moznost precist si v manualu o opraveni plaste 
-//TODO kdyz se prerusi nabijeni, vypoji se aku vrtacka
+//TODO pruchod do vesmiru nelze zavrit povelem zavri prulez mezi prechodovou komorou a vesmirem 
 
 //prejmenovat po opraveni poskozene misto na opravene misto
 
@@ -811,7 +809,7 @@ function nabijAku(sep, _this, parr){
 	if(obj.command == "aku vrtacka"){
 		println("Zapojil aku vrtačku do nabíječky. Zhruba za minutu by měla být dobitá. Na nabíječce se rozsvítí zelená ledka.");
 		//setTimeout(()=> { nabito(game.roomMap.get("kokpit").objMap.get("nabijecka"))} , 1000 * 60);  //za 120 sekund bude nabito
-		setTimeout(()=> { nabito(game.roomMap.get("kokpit").objMap.get("nabijecka"))} , 1000 * 10);  //za 120 sekund bude nabito
+		setTimeout(()=> { nabito(game.roomMap.get("kokpit").objMap.get("nabijecka"))} , 1000 * 20);  //za 120 sekund bude nabito
 
 		if(game.bag.objMap.has("aku vrtacka") == true)
 			moveObjToRoom("aku vrtacka", "kokpit");
@@ -1007,7 +1005,7 @@ function cti(sep, _this, parametr){
 	println("Na stránkách manálu ses dočetl:"); 
 	//poskytni napovedu o pk
 	if(obj.command == "prechodova komora"){
-		println("Pro vstup do vesmíru je nutné projít přechodovou komorou. To je místnost, kde se nachází skafandr, nutný pro výstup do volného vesmíru. Po nasazení skafandru a uzavření obou průlezů, je nutné odčerpat vzduch. To je provedeno stisknutím příslušného tlačítka.");
+		println("Pro vstup do vesmíru je nutné projít přechodovou komorou. To je místnost, kde se nachází skafandr, nutný pro výstup do volného vesmíru. Po nasazení skafandru a uzavření obou průlezů, je nutné odčerpat vzduch. To se provede stisknutím příslušného tlačítka.");
 	}
 
 
@@ -1016,7 +1014,7 @@ function cti(sep, _this, parametr){
 	}
 
 	if(obj.command == "oprava plaste"){
-		println("Vyskytne-li se někde na raktetě místo s poškozenými keramickými destičkami, je nutné jej opravit. To je provedeno při výstupu do volného vesmíru. Nejprve je nutné přiložit keramické destičky na poškozené místo, a poté přišroubovat destičky aku vrtačkou."); 
+		println("Vyskytne-li se někde na raktetě místo s poškozenými keramickými destičkami, je nutné jej opravit. To je provedeno při výstupu do volného vesmíru. Nejprve je nutné přiložit keramické destičky na poškozené místo, a poté přišroubovat šroubky aku vrtačkou."); 
 	}
 
 	return true;
@@ -1027,10 +1025,9 @@ function zasroubuj(sep, _this, parametr){
 
 	if(game.bag.objMap.has("aku vrtacka") == false){ println("Abys mohl šroubovat, musíš mít v ruce aku vrtačku."); return true; }
 
-
-	if(game.room != "vesmir") { 
+	if(game.room != "vesmir"){ 
 		var name = "";
-		switch (parametr.name){
+		switch (game.room){
 			case "kokpit":
 				name = "kokpitu";
 				break;
@@ -1042,14 +1039,8 @@ function zasroubuj(sep, _this, parametr){
 				break;
 
 		}
-		println("Aku vrtačka je určena pouze pro venkovní použití. Její použití v " + parametr.name + " by mohlo být nebezpečné!"); 
-		return true; 
-	}
-
-	var pole = ["keramicke desticky"]; //chceme prisroubovat keramicke desticky
-	var res = parser.handleCommand(sep, pole);
-	if(res.command == ""){
-		println("Nic takového nemůžeš zašroubovat. Možná by pomohlo přišroubovat keramické destičky."); return true; 
+		println("Aku vrtačka je určena pouze pro venkovní použití. Její použití v " + game.room + " by mohlo být nebezpečné!");
+		return true;
 	}
 
 	//akucka musi byt v ruce, sroubky taky, akucka musi byt nabita 
@@ -1058,17 +1049,27 @@ function zasroubuj(sep, _this, parametr){
 	var aku = game.bag.objMap.get("aku vrtacka");
 
 	if(aku.battery == false) {println("Aku vrtačka je vybitá, musíš ji nejprve nabít."); return true; }
-	if(game.room != "vesmir") {println("Jemně jsi zmáčkl spoušť aku vrtačky. Ale bohužel tu není nic, co by šlo zašroubovat"); return true; }
 
-	println("Šroubuješ a šroubuješ. Nejprve jsi zašroubovat první šroubek, pak druhý, potom třetí a čtvrý.");
-	if(game.bag.objMap.has("keramicke desticky") == false) {println("Možná by bylo fajn mít s sebou keramické destičky."); return true; }
-	if(game.bag.objMap.get("keramicke desticky").attached == false) { println("Ale keramické destičky jsi nepřišrouboval, protože jsi je nepřiložil na místo."); return true; }
+	var sroubky = ["sroubky"]; //musime prisroubovat sroubky 
+	var obj = parser.handleCommand(sep, sroubky);
+	
+	if(obj.command == ""){
+		println("Musíš zadat, co chceš šroubovat. Například šroubky."); 
+	}
+
+	showInputIn(4000); 
+	println("Jemně jsi zmáčkl spoušť aku vrtačky."); 
+	println("Šroubuješ a šroubuješ. Nejprve jsi zašroubovat první šroubek, pak druhý, potom třetí a čtvrý.", 1);
 
 	//sroubky dame do vesmiru
-	var objM = game.roomMap.get("vesmir").objMap;
+	//var objM = game.roomMap.get("vesmir").objMap;
+	var objM = game.roomMap.get(game.room).objMap;
 	game.bag.objMap.get("sroubky").screwed = true; 
 	objM.set("sroubky", game.bag.objMap.get("sroubky"));
 	game.bag.objMap.delete("sroubky");
+		
+	if(game.bag.objMap.has("keramicke desticky") == false || game.bag.objMap.get("keramicke desticky").attached == false) { println("Ale poškozené místo jsi neopravil, protože jsi nepřiložil keramické destičky na poškozené místo.", 4); return true; }
+
 
 	//premistime i keramicke desticky
 	objM.set("keramicke desticky", game.bag.objMap.get("keramicke desticky"));
@@ -1130,26 +1131,35 @@ function priloz(sep, _this, parametr){
 
 //odsroubuj sroubky
 function odsroubuj(sep, _this, parametr){
+	
+	if(game.bag.objMap.has("aku vrtacka") == false){ println("Nemáš v ruce aku vrtačku, nemůžeš nic odšroubovat."); return true; }
+
+	if(parametr.name != "vesmir") { println("Je nebezpečné šroubovat mimo vesmír."); return true; }
+
 	if(sep.length == 0) {println("Musíš zadat, co chceš odšroubovat."); return true; }
+
 	var pole = ["sroubky"];
 	var res = parser.handleCommand(sep, pole);
+
 	if(res.command == ""){ println("Nic takového nemůžeš odšroubovat. Možná jsi myslel šroubky."); return true; }
 
-	if(game.bag.objMap.has("aku vrtacka") == false){ println("Nemáš v ruce aku vrtačku, nemůžeš nic odšroubovat."); return true; }
 	if(game.bag.objMap.get("aku vrtacka").battery == false){ println("Aku vrtačka je vybitá. Nejprve ji musíš dobít."); return true; }
 
-	if(parametr.name != "vesmir" || parametr.objMap.has("sroubky") == false || parametr.objMap.get("sroubky").screwed == false){
-		println("Není tu nic k odšroubování. Šroubky nejsou zašroubované."); 
+	if(game.roomMap.get(game.room).objMap.get("sroubky") == false || game.roomMap.get(game.room).objMap.get("sroubky").screwed == false){
+		println("Šroubky nejsou zašroubované."); 
 		return true; 
 	}
 
 	//sroubky dame do bagu
 	println("Odšroubováváš šroubky."); 
-	var sroubky = parametr.objMap.get("sroubky");
+	var thisRoom = game.roomMap.get(game.room);
+	var sroubky = thisRoom.objMap.get("sroubky"); 
 	sroubky.screwed = false;
 	game.bag.objMap.set("sroubky", sroubky);
-	parametr.objMap.delete("sroubky");
-	println("Odšrouboval jsi šroubky."); 
+	thisRoom.objMap.delete("sroubky");
+	showInputIn(4000); 
+	println("Šroubky odšroubovány.", 4); 
+	return true;
 }
 
 function piluj(sep, _this, par){
@@ -1173,7 +1183,7 @@ function aktivuj(sep, _this, par){
 	var vv = game.roomMap.get('vesmir');
 	if(vv.objMap.has("keramicke desticky") == false || vv.objMap.get("keramicke desticky").attached == false) {  showInputIn(10*1000); println("Test přerušen. Nalezena neznámá závada v sektoru AT346. Před nastavením autopilota je nutné ji opravit.", 10); return true; }
 
-	showInputIn(15); 
+	hideInput(); 
 	println("Autopilot úspěsně aktivován.", 10); 
 	println("Navádění na přistání začalo.", 15); 
 
