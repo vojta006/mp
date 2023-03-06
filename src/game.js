@@ -6,7 +6,7 @@ document.addEventListener("keydown", (event) => { keyPressed(event); });
 
 //vypise text do div hra
 function println(text, delay = 0){
-	delay = 0; 
+//	delay = 0; 
 	if(delay != 0){
 		setTimeout(()=> { println(text)}, delay * 1000); 
 	}
@@ -33,8 +33,8 @@ function hideInput(){
 }
 
 //za time milisekund nastavi game.action na true
-function showInputIn(time){  time = 0;hideInput(); setTimeout(() => { showInput(); }, time); }
-//function showInputIn(time){  ;hideInput(); setTimeout(() => { showInput(); }, time); }
+//function showInputIn(time){  time = 0;hideInput(); setTimeout(() => { showInput(); }, time); }
+function showInputIn(time){  ;hideInput(); setTimeout(() => { showInput(); }, time); }
 
 class Parser{
 
