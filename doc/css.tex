@@ -4,10 +4,10 @@
 
 \subsection{CSS}
 \label{css}
-CSS (zkratka z anglického Cascading Style Sheet, v češtině kaskádové styly) je jazyk, definující způsob zobrazení elementů na HTML, XHTML nebo XML stránce. Hlavní myšlenkou je oddělit obsah a strukturu dokumentu od jeho vizuální podoby, jako barvy, rozložení a fontů. Toto oddělení také umožňuje použít stejný vizuální vzhled pro více HTML stránek. Autorem myšlenky oddělit obsah od vzhledu je norský programátor Håkon Wium Lie. Nyní je publikovaný pod organizací W3C.  
+CSS (zkratka z anglického Cascading Style Sheet, v češtině kaskádové styly) je jazyk definující způsob zobrazení elementů na HTML, XHTML nebo XML stránce. Hlavní myšlenkou je oddělit obsah a strukturu dokumentu od jeho vizuální podoby, jako barvy, rozložení a fontů. Toto oddělení také umožňuje použít stejný vizuální vzhled pro více HTML stránek. Autorem myšlenky oddělit obsah od vzhledu je norský programátor Håkon Wium Lie. Nyní je publikovaný pod organizací W3C.  
 
 \subsubsection{Specifikace}
-\begin{quote} \textit{"Definice kaskádových stylů sestává z několika pravidel. Každé pravidlo obsahuje selektor a blok deklarací. Každý blok deklarací pak obsahuje deklarace oddělené středníky ; a každá deklarace sestává z identifikátoru vlastnosti, následuje dvojtečka : a hodnota vlastnosti. Nepovinně ještě může následovat označení !important, které zvýší sílu deklarace."} \cite{web:wik:cz:css} \end{quote} 
+\begin{quote} \textit{„Definice kaskádových stylů sestává z několika pravidel. Každé pravidlo obsahuje selektor a blok deklarací. Každý blok deklarací pak obsahuje deklarace oddělené středníky ; a každá deklarace sestává z identifikátoru vlastnosti, následuje dvojtečka : a hodnota vlastnosti. Nepovinně ještě může následovat označení !important, které zvýší sílu deklarace."} \cite{web:wik:cz:css} \end{quote} 
 
 \subsubsection*{Selektory}
 Pravidla jsou na HTML elementy uplatňována podle selektorů, a základní můžeme rozdělit následujícím způsobem.
@@ -21,7 +21,7 @@ Pravidla jsou na HTML elementy uplatňována podle selektorů, a základní mů�
 		Zahrneme-li toto pravidlo do HTML, všechny nadpisy 3. úrovně budou modrou barvou, velikosti 10 pixelů a podtržené.
 	\item Elementy s konkrétním atributem - názvem třídy nebo id.
 		\begin{itemize}
-			\item Podle atributu id, jenž musí být unikátní v celém dokumentu. Pravidla s tímto selektorem se použijí pro nejvýše jeden element a zapisují se \textit{idname}. %dat pred id_name #
+			\item Podle atributu id, které musí být unikátní v celém dokumentu. Pravidla s tímto selektorem se použijí pro nejvýše jeden element a zapisují se \textit{idname}. %dat pred id_name #
 			\item Podle atributu class. Ten nemusí být unikátní. Zapisují se \textit{.classname}.
 		\end{itemize}
 
@@ -32,7 +32,7 @@ Pravidla jsou na HTML elementy uplatňována podle selektorů, a základní mů�
 			\caption{Selektor třídy a id}
 		\end{figure}
 		Pravidla mohou mít více selektorů oddělených čárkou. Pro všechny elementy s atributem \textit{class = "jmenotridy"} a unikátní element s atributem \textit{id ="nazev\_id"}, bude text psán kurzivou o velikost 1 cm.
-	\item Elementy v závislosti na jejich umístění v hierarchii dokumentu. Například pravidla se selektorem \textit{body>div} budou aplikována pouze na elementy \textit{div}, které jsou přímým potomkem elementu \textit{body}. Neplatil by tedy pro \textit{div} uzavřený v elementu \textit{p}, uzavřeném v elementu \textit{body}.
+	\item Elementy v závislosti na jejich umístění v hierarchii dokumentu. Například pravidla se selektorem \textit{body \textgreater div} budou aplikována pouze na elementy \textit{div}, které jsou přímým potomkem elementu \textit{body}. Neplatil by tedy pro \textit{div} uzavřený v elementu \textit{p}, uzavřeném v elementu \textit{body}.
 \end{itemize}
 Výše vyjmenované sektory však nejsou kompletní. Existuje množství dalších selektorů. \cite{web:cz:selektory}
 
